@@ -1,5 +1,6 @@
+from django.views import generic
 from django.http import HttpResponse
-
+from django.shortcuts import render
 
 def index(request):
-    return HttpResponse("Welcome to Group B-03's study buddy finder website!")
+    return render(request, 'welcome/index.html')
