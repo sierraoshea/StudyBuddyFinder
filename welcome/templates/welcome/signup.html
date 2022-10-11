@@ -1,0 +1,9 @@
+{% load account %}
+
+{% user_display user %}
+
+<p>{{ user }}</p>
+
+<form action="{% url 'index' %}" method="post"> 
+    {% csrf_token %}
+    <input type="text" name="title" id="title">
