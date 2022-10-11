@@ -5,16 +5,11 @@
 {% bootstrap_css %}
 {% bootstrap_javascript %}
 
-{% include 'welcome/navbar.html' %}
+{% include 'welcome/base.html' %}
 
 <body>
+    {% if user.is_authenticated %}
     <div class="p-5 my-4 bg-light rounded-3">
-        {% if user.is_authenticated %}
         <h1 class="text-center">Welcome to Group B-03's study buddy finder website, {{ user.username }}!</h1>
-        {% else %}
-        <div class="text-center">
-            <a href="{% provider_login_url 'google' %}">Login with Google</a>
-        </div>
-    </div>
     {% endif %}
 </body>

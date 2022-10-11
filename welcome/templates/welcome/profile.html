@@ -1,0 +1,43 @@
+{% load socialaccount %}
+{% load bootstrap5 %}
+{% load static %}
+
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{% include 'welcome/base.html' %}
+
+<body>
+    <div class="m-3">
+
+        <h1 class="text-center">Edit Profile</h1>
+
+        {{ user.classes.classes }}
+
+        <div class="form-group">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <p>Classes:</p>
+                {% if user.userclasses_set.all %}
+                <ul class="p-2">
+                    {% for class in user.userclasses_set.all %}
+                    <li class="list-group-item list-group-item-dark">
+                        <div class="text-center">
+                            {{ class }}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>You have no classes added to you profile.</p>
+                {% endif %}
+
+                <a href="{% url 'classes' %}">Edit Classes</a>
+                <br>
+                <br>
+                <button class="btn btn-secondary">Update Profile</button>
+            </form>
+        </div>
+    </div>
+</body>
