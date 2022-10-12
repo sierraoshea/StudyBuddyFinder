@@ -10,7 +10,7 @@
 <div class="m-3">
     <h1 class="text-center">Edit Classes</h1>
 
-    <form action="{% url 'classes' %}" method="post">
+    <form action="{% url 'delete' %}" method="post">
         {% csrf_token %}
         {% if user.userclasses_set.all %}
         {% for class in user.userclasses_set.all %}
@@ -30,5 +30,17 @@
         </div>
         {% endif %}
     </form>
+    <!-- Add Form here to add classes -->
+    <form action="{% url 'profile' %}" method="post"></form>
+    {% csrf_token %}
+    {% for class in class_list %}
+                                    <!-- Basic proof of concept. Takes a list of lists called class_list passed in edit_classes view -->
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+        <label class="form-check-label" for="flexCheckDefault">
+            {{ class|join:" " }}    <!-- And prints out all classes next to checkboxes with elements separated by " " -->
+        </label>
+    </div> 
+    {% endfor %}
+    </form>
 </div>
-<!-- Add Form here to add classes -->

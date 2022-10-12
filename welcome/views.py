@@ -1,18 +1,19 @@
 from django.views import generic
 from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse
 from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
 from .forms import EditProfileForm
 from .models import UserClasses
 
+
+
 def index(request):
-    if request.user.is_authenticated:
-        first_initial = request.user.username[0].upper()
-    else:
-        first_initial = ""
-    return render(request, 'welcome/index.html', {'first_initial': first_initial})
+    return render(request, 'welcome/index.html')
+
 
 class EditView(generic.UpdateView):
     form_class = EditProfileForm
@@ -22,16 +23,27 @@ class EditView(generic.UpdateView):
     def get_object(self):
         return self.request.user
 
+
 def edit_classes(request):
     template_name = 'welcome/edit_classes.html'
 
+    # Basic idea for displaying JSON into a view. Parse the JSON in here (or in another file/function?) 
+    # and pass it as a list of lists (or other) in the render.
+    class_list = [["CS", 3100, "LEC"], ["CS", 3240, "LEC"]]
+    return render(request, template_name, {'class_list': class_list})
+
+
+def delete_class(request):
+    template_name = 'welcome/edit_classes.html'
     try:
         selected_class = request.user.userclasses_set.get(pk=request.POST['class'])
        
     except(KeyError):
-        return render(request, template_name)
+        return HttpResponseRedirect(reverse('classes'))
     else:
         selected_class.delete()
-        return render(request, template_name)
+        return HttpResponseRedirect(reverse('classes'))
 
-    
+
+def add_classes(request):
+    return HttpResponse("Not setup yet")
