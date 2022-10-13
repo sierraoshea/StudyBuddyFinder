@@ -1,0 +1,47 @@
+{% load socialaccount %}
+{% load bootstrap5 %}
+{% load static %}
+
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{% include 'welcome/base.html' %}
+
+<div class="m-3">
+    <h1 class="text-center">Edit Classes</h1>
+
+    <form action="{% url 'delete' %}" method="post">
+        {% csrf_token %}
+        {% if user.userclasses_set.all %}
+        {% for class in user.userclasses_set.all %}
+
+            <div class="form-check p-0">
+                <div class="btn-group">
+                    <input type="radio" class="btn-check" name="class_to_delete" id="class {{ forloop.counter }}"
+                        value="{{ class.id }}">
+                    <label class="btn btn-outline-primary text-center" for="class {{ forloop.counter }}">
+                        {{ class }}
+                    </label>
+                </div>
+            {% endfor %}
+            <br>
+            <input type="submit" value="Remove Class">
+        </div>
+        {% endif %}
+    </form>
+    <!-- Add Form here to add classes -->
+    <form action="{% url 'add' %}" method="post">
+    {% csrf_token %}
+    {% for class in class_list %}
+    {% if class not in current_classes %}
+    <div class="form-check">
+        <input class="form-check-input" name="class_to_add" type="checkbox" value="{{ class }}" id="class {{ forloop.counter }}">
+        <label class="form-check-label" for="class {{ forloop.counter }}">
+            {{ class|join:" " }}
+        </label>
+    </div>
+    {% endif %}
+    {% endfor %}
+    <input type="submit" value="Add Class">
+    </form>
+</div>
