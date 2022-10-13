@@ -8,4 +8,8 @@ class UserClasses(models.Model):
     component = models.CharField(max_length=10)
 
     def __str__(self):
-        return self.subject + " " + str(self.catalog_number)
+        return self.subject + " " + str(self.catalog_number) + " " + self.component
+
+    def as_array(self):
+        return [self.subject, self.catalog_number, self.component]
+

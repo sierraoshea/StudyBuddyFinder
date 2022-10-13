@@ -15,32 +15,33 @@
         {% if user.userclasses_set.all %}
         {% for class in user.userclasses_set.all %}
 
-        <div class="d-flex flex-column align-items-center">
             <div class="form-check p-0">
                 <div class="btn-group">
-                    <input type="radio" class="btn-check" name="class" id="class {{ forloop.counter }}"
+                    <input type="radio" class="btn-check" name="class_to_delete" id="class {{ forloop.counter }}"
                         value="{{ class.id }}">
                     <label class="btn btn-outline-primary text-center" for="class {{ forloop.counter }}">
                         {{ class }}
                     </label>
                 </div>
-            </div>
             {% endfor %}
+            <br>
             <input type="submit" value="Remove Class">
         </div>
         {% endif %}
     </form>
     <!-- Add Form here to add classes -->
-    <form action="{% url 'profile' %}" method="post"></form>
+    <form action="{% url 'add' %}" method="post">
     {% csrf_token %}
     {% for class in class_list %}
-                                    <!-- Basic proof of concept. Takes a list of lists called class_list passed in edit_classes view -->
+    {% if class not in current_classes %}
     <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-        <label class="form-check-label" for="flexCheckDefault">
-            {{ class|join:" " }}    <!-- And prints out all classes next to checkboxes with elements separated by " " -->
+        <input class="form-check-input" name="class_to_add" type="checkbox" value="{{ class }}" id="class {{ forloop.counter }}">
+        <label class="form-check-label" for="class {{ forloop.counter }}">
+            {{ class|join:" " }}
         </label>
-    </div> 
+    </div>
+    {% endif %}
     {% endfor %}
+    <input type="submit" value="Add Class">
     </form>
 </div>
