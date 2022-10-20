@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'welcome.apps.WelcomeConfig',
     'bootstrap5',
     'rest_framework',
-    'snippets',
 ]
 
 MIDDLEWARE = [
