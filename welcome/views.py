@@ -9,7 +9,7 @@ from django.contrib.auth.forms import UserChangeForm
 from .forms import EditProfileForm
 from .models import UserClasses
 import ast
-
+import requests
 
 
 def index(request):
@@ -61,3 +61,7 @@ def add_classes(request):
             c = ast.literal_eval(class_to_add)
             UserClasses.objects.create(user=request.user,subject=c[0], catalog_number=c[1], component=c[2])
         return HttpResponseRedirect(reverse('classes'))
+
+def home(request):
+    response = requests.get('http://luthers-list.herokuapp.com/api/').json()
+    return render(request,'home.html',{'response':response})
