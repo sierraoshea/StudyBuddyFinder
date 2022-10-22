@@ -63,5 +63,5 @@ def add_classes(request):
 
 
 def home(request):
-    response = requests.get('http://luthers-list.herokuapp.com/api/').json()
+    response = requests.get('http://luthers-list.herokuapp.com/api/dept/CS/?format=json').json()
     return render(request, 'welcome/home.html', {'response': response})
