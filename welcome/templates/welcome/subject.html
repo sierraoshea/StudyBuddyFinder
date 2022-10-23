@@ -6,7 +6,7 @@
 </head>
 <body>
     <strong>Select Your Current Courses</strong>
-    <form action="{% url 'welcome:add' %}" method="post">
+    <form action="{% url 'add' %}" method="post">
         {% csrf_token %}
         {% for class in classes %}
         <div class="form-check">

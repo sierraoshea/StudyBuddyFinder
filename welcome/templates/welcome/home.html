@@ -6,7 +6,7 @@
 </head>
 <body>
     <strong>Select Your Current Courses</strong>
-    <form action = "{% url 'welcome:search' %}" method="post" class="form">
+    <form action = "{% url 'search' %}" method="post" class="form">
         {% csrf_token %}
         <input type="text" id="searchbox" name="searchbox">
         <input type="submit" value="Search">

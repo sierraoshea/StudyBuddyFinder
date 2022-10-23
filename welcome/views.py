@@ -19,7 +19,7 @@ def index(request):
 class EditView(generic.UpdateView):
     form_class = EditProfileForm
     template_name = 'welcome/profile.html'
-    success_url = reverse_lazy('welcome:index')
+    success_url = reverse_lazy('index')
 
     def get_object(self):
         return self.request.user
@@ -40,23 +40,23 @@ def delete_class(request):
     try:
         selected_class = request.user.userclasses_set.get(pk=request.POST['class_to_delete'])
     except(KeyError):
-        return HttpResponseRedirect(reverse('welcome:classes'))
+        return HttpResponseRedirect(reverse('classes'))
     else:
         selected_class.delete()
-        return HttpResponseRedirect(reverse('welcome:classes'))
+        return HttpResponseRedirect(reverse('classes'))
 
 def add_classes(request):
     try:
         selected_classes = request.POST.getlist('class_to_add')
     except(KeyError):
-        return HttpResponseRedirect(reverse('welcome:classes'))
+        return HttpResponseRedirect(reverse('classes'))
     
     else:
         add = True
         for class_to_add in selected_classes:
             c = class_to_add.split(" ")
             UserClasses.objects.create(user=request.user,subject=c[0], catalog_number=c[1], component=c[2])
-        return HttpResponseRedirect(reverse('welcome:classes'))
+        return HttpResponseRedirect(reverse('classes'))
 
 
 def subject_view(request, subject):

@@ -4,7 +4,6 @@ from django.contrib.auth.views import LogoutView
 from welcome.views import search_classes
 from . import views
 
-app_name = 'welcome'
 urlpatterns = [
     path('', views.index, name='index'),
     path('accounts/', include('allauth.urls')),
