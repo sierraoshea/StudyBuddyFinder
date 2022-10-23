@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <strong>Select Your Current Courses</strong>
+    <form action = "{% url 'welcome:search' %}" method="post" class="form">
+        {% csrf_token %}
+        <input type="text" id="searchbox" name="searchbox">
+        <input type="submit" value="Search">
+    </form>
+    {% for i in response %}
+        <div>{{i.subject}} {{i.catalog_number}} {{i.description}}</div>
+    {% endfor %}
+</body>
+</html>

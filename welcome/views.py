@@ -62,3 +62,21 @@ def add_classes(request):
 def subject_view(request, subject):
     classes = requests.get('http://luthers-list.herokuapp.com/api/dept/' + subject + '/?format=json').json()
     return render(request, 'welcome/subject.html', {'classes': classes})
+
+def search_classes(request):
+    searchPhrase = request.POST['searchbox']
+    foundClasses = []
+    response = requests.get('http://luthers-list.herokuapp.com/api/dept/CS/?format=json').json()
+    for thisClass in response:
+        if searchPhrase in thisClass["description"]:
+            foundClasses.append(thisClass)
+    return render(request, 'welcome/home.html', {'response': foundClasses})
+
+def search_classes(request):
+    searchPhrase = request.POST['searchbox']
+    foundClasses = []
+    response = requests.get('http://luthers-list.herokuapp.com/api/dept/CS/?format=json').json()
+    for thisClass in response:
+        if searchPhrase in thisClass["description"]:
+            foundClasses.append(thisClass)
+    return render(request, 'welcome/home.html', {'response': foundClasses})
