@@ -18,7 +18,7 @@
     <h1 class="text-center">Edit Classes</h1>
 
     <div class="container">
-    <form action="{% url 'delete' %}" method="post">
+    <form action="{% url 'welcome:delete' %}" method="post">
         {% csrf_token %}
         {% if user.userclasses_set.all %}
         {% for class in user.userclasses_set.all %}
@@ -43,7 +43,7 @@
         <input class="form-control" id="myInput" type="text" placeholder="Search..">
         <ul class="list-group" id="myList">
         {% for dept in dept_list %}
-           <li class="list-group-item"><a href="{% url 'class_view' dept.subject %}">{{ dept.subject }}</a></li>
+           <li class="list-group-item"><a href="{% url 'welcome:class_view' dept.subject %}">{{ dept.subject }}</a></li>
         {% endfor %}
         </ul>
         </div>
