@@ -1,3 +1,4 @@
+<!doctype html>
 {% load socialaccount %}
 {% load bootstrap5 %}
 {% load static %}
@@ -6,7 +7,7 @@
 {% bootstrap_javascript %}
 
 {% include 'welcome/base.html' %}
-
+<body>
 <div class="m-3">
     <h1 class="text-center">Edit Classes</h1>
 
@@ -29,18 +30,9 @@
         {% endif %}
     </form>
     <!-- Add Form here to add classes -->
-    <form action="{% url 'add' %}" method="post">
-    {% csrf_token %}
-    {% for class in class_list %}
-    {% if class not in current_classes %}
-    <div class="form-check">
-        <input class="form-check-input" name="class_to_add" type="checkbox" value="{{ class }}" id="class {{ forloop.counter }}">
-        <label class="form-check-label" for="class {{ forloop.counter }}">
-            {{ class|join:" " }}
-        </label>
-    </div>
-    {% endif %}
+    {% for dept in dept_list %}
+        <a href="{% url 'class_view' dept.subject %}">{{ dept.subject }}</a>
+        <br>
     {% endfor %}
-    <input type="submit" value="Add Class">
-    </form>
 </div>
+</body>

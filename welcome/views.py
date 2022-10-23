@@ -31,11 +31,8 @@ def edit_classes(request):
     # Basic idea for displaying JSON into a view. Parse the JSON in here (or in another file/function?) 
     # and pass it as a list of lists (or other) in the render.
 
-    class_list = [["CS", 3100, "LEC"], ["CS", 3240, "LEC"]]
-    current_classes = []
-    for cur_class in request.user.userclasses_set.all():
-        current_classes.append(cur_class.as_array())
-    return render(request, template_name, {'class_list': class_list, 'current_classes': current_classes})
+    dept_list = requests.get('http://luthers-list.herokuapp.com/api/deptlist/?format=json').json()
+    return render(request, template_name, {'dept_list': dept_list})
 
 
 def delete_class(request):
@@ -57,11 +54,11 @@ def add_classes(request):
     else:
         add = True
         for class_to_add in selected_classes:
-            c = ast.literal_eval(class_to_add)
+            c = class_to_add.split(" ")
             UserClasses.objects.create(user=request.user,subject=c[0], catalog_number=c[1], component=c[2])
         return HttpResponseRedirect(reverse('classes'))
 
 
-def home(request):
-    response = requests.get('http://luthers-list.herokuapp.com/api/dept/CS/?format=json').json()
-    return render(request, 'welcome/home.html', {'response': response})
+def subject_view(request, subject):
+    classes = requests.get('http://luthers-list.herokuapp.com/api/dept/' + subject + '/?format=json').json()
+    return render(request, 'welcome/subject.html', {'classes': classes})
