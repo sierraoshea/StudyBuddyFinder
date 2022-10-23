@@ -65,3 +65,12 @@ def add_classes(request):
 def home(request):
     response = requests.get('http://luthers-list.herokuapp.com/api/dept/CS/?format=json').json()
     return render(request, 'welcome/home.html', {'response': response})
+
+def search_classes(request):
+    searchPhrase = request.POST['searchbox']
+    foundClasses = []
+    response = requests.get('http://luthers-list.herokuapp.com/api/dept/CS/?format=json').json()
+    for thisClass in response:
+        if searchPhrase in thisClass["description"]:
+            foundClasses.append(thisClass)
+    return render(request, 'welcome/home.html', {'response': foundClasses})
