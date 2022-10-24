@@ -5,9 +5,14 @@
     <title>Title</title>
 </head>
 <body>
-    <strong>List of all courses</strong>
-    {% for i in response%}
-    {{i.course}}
-    {% endfor%}
+    <strong>Select Your Current Courses</strong>
+    <form action = "{% url 'search' %}" method="post" class="form">
+        {% csrf_token %}
+        <input type="text" id="searchbox" name="searchbox">
+        <input type="submit" value="Search">
+    </form>
+    {% for i in response %}
+        <div>{{i.subject}} {{i.catalog_number}} {{i.description}}</div>
+    {% endfor %}
 </body>
 </html>

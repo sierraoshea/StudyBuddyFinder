@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <strong>Select Your Current Courses</strong>
+    <form action="{% url 'add' %}" method="post">
+        {% csrf_token %}
+        {% for class in classes %}
+        <div class="form-check">
+            <input class="form-check-input" name="class_to_add" type="checkbox" 
+            value="{{ class.subject }} {{ class.catalog_number }} {{ class.component }}" id="class {{ forloop.counter }}">
+            <label class="form-check-label" for="class {{ forloop.counter }}">
+                {{class.subject}} {{class.catalog_number}} {{class.component}}
+            </label>
+        </div>
+        {% endfor %}
+        <input type="submit" value="Add Class">
+    </form>
+</body>
+</html>
