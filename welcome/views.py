@@ -10,6 +10,7 @@ from .forms import EditProfileForm
 from .models import UserClasses
 import ast
 import requests
+from itertools import groupby
 
 
 def index(request):
@@ -48,6 +49,7 @@ def delete_class(request):
 def add_classes(request):
     try:
         selected_classes = request.POST.getlist('class_to_add')
+        print(selected_classes)
     except(KeyError):
         return HttpResponseRedirect(reverse('classes'))
     
@@ -61,7 +63,13 @@ def add_classes(request):
 
 def subject_view(request, subject):
     classes = requests.get('http://luthers-list.herokuapp.com/api/dept/' + subject + '/?format=json').json()
-    return render(request, 'welcome/subject.html', {'classes': classes})
+    
+    
+    result = {
+            key : list(group) for key, group in groupby(classes,key=lambda x:x['subject'] + " " + x['catalog_number'] + " " + x['description'])
+           } 
+
+    return render(request, 'welcome/subject.html', {'classes': result})
 
 def search_classes(request):
     searchPhrase = request.POST['searchbox']
