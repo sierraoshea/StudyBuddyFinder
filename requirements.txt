@@ -7,3 +7,5 @@ django-heroku
 django-allauth
 
 django-bootstrap-v5
+
+dj-database-url
