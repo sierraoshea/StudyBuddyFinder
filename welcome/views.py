@@ -49,7 +49,6 @@ def delete_class(request):
 def add_classes(request):
     try:
         selected_classes = request.POST.getlist('class_to_add')
-        print(selected_classes)
     except(KeyError):
         return HttpResponseRedirect(reverse('classes'))
     
