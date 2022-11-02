@@ -10,6 +10,7 @@ from .forms import EditProfileForm
 from .models import UserClasses
 import ast
 import requests
+from itertools import groupby
 
 
 def index(request):
@@ -38,11 +39,15 @@ def edit_classes(request):
 def delete_class(request):
     template_name = 'welcome/edit_classes.html'
     try:
-        selected_class = request.user.userclasses_set.get(pk=request.POST['class_to_delete'])
+        selected_classes = request.POST.getlist('class_to_delete')
+        class_ids = []
+        for c in selected_classes:
+            class_ids.append(request.user.userclasses_set.get(pk=c))
     except(KeyError):
         return HttpResponseRedirect(reverse('classes'))
     else:
-        selected_class.delete()
+        for id in class_ids:
+            id.delete()
         return HttpResponseRedirect(reverse('classes'))
 
 def add_classes(request):
@@ -54,14 +59,20 @@ def add_classes(request):
     else:
         add = True
         for class_to_add in selected_classes:
-            c = class_to_add.split(" ")
-            UserClasses.objects.create(user=request.user,subject=c[0], catalog_number=c[1], component=c[2])
+            c = class_to_add.split("/")
+            UserClasses.objects.create(user=request.user,subject=c[0], catalog_number=c[1], component=c[2], section=c[3], professor=c[4])
         return HttpResponseRedirect(reverse('classes'))
 
 
 def subject_view(request, subject):
     classes = requests.get('http://luthers-list.herokuapp.com/api/dept/' + subject + '/?format=json').json()
-    return render(request, 'welcome/subject.html', {'classes': classes})
+    
+    
+    result = {
+            key : list(group) for key, group in groupby(classes,key=lambda x:x['subject'] + " " + x['catalog_number'] + " " + x['description'])
+           } 
+
+    return render(request, 'welcome/subject.html', {'classes': result})
 
 def search_classes(request):
     searchPhrase = request.POST['searchbox']
