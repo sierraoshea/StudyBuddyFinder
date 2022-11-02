@@ -10,7 +10,10 @@ class UserClasses(models.Model):
     professor = models.CharField(max_length=200)
 
     def __str__(self):
-        return self.subject + " " + str(self.catalog_number) + " " + self.component + " Section " + str(self.section) + " w/ " + self.professor
+        if self.professor == "-":
+            return self.subject + " " + str(self.catalog_number) + " " + self.component + " Section " + str(self.section)
+        else:
+            return self.subject + " " + str(self.catalog_number) + " " + self.component + " Section " + str(self.section) + " w/ " + self.professor
 
     def as_array(self):
         return [self.subject, self.catalog_number, self.component]
