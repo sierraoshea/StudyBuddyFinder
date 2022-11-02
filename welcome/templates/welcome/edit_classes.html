@@ -24,9 +24,9 @@
         {% for class in user.userclasses_set.all %}
             <div class="form-check p-0">
                 <div class="btn-group">
-                    <input type="radio" class="btn-check" name="class_to_delete" id="class {{ forloop.counter }}"
+                    <input class="form-check-input" name="class_to_delete" type="checkbox" id="class {{ forloop.counter }}"
                         value="{{ class.id }}">
-                    <label class="btn btn-outline-primary text-center" for="class {{ forloop.counter }}">
+                    <label for="class {{ forloop.counter }}">
                         {{ class }}
                     </label>
                 </div>
