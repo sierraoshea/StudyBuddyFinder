@@ -33,9 +33,9 @@
                                     </td>
                                     <td>
                                         {% if class.available %}
-                                            <input type="checkbox" name="class_to_update" value="{{ class.id }}" checked>
+                                            <input type="radio" name="class_to_update" value="{{ class.id }}" checked>
                                         {% else %}
-                                            <input type="checkbox" name="class_to_update" value="{{ class.id }}">
+                                            <input type="radio" name="class_to_update" value="{{ class.id }}">
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -51,6 +51,21 @@
                         <h3 class="text-center m-2">Find Study Buddies</h3>
                     </div>
                     <div class="col-md-2 m-2 bg-white rounded">
+                         <ul>
+                            {% for user in user_set.all %}
+                                {{ user.username }}
+                            {% endfor %}
+                             {% for class in user.userclasses_set.all %}
+                                {% if class.available %}
+                                <h1>
+                                    {% for person in other_users %}
+                                        {{ person.user.username }}
+                                    {% endfor %}
+                                </h1>
+                                {% endif %}
+                             {% endfor %}
+
+                         </ul>
                     </div>
                 </div>
             </div>

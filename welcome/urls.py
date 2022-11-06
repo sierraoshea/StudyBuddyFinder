@@ -14,5 +14,7 @@ urlpatterns = [
     path('profile/edit_classes/add', views.add_classes, name='add'),
     path('profile/edit_classes/<str:subject>/', views.subject_view, name='class_view'),
     path('classes/search', views.search_classes, name ='search'),
-    path('update', views.update, name='update')
+    path('update', views.update, name='update'),
+    path('send_friend_request/<int:userID>/', views.send_friend_request, name='send friend request'),
+    path('accept_friend_request/<int:requestID>/', views.accept_friend_request, name='accept friend request')
 ]

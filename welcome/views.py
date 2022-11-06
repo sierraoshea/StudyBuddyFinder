@@ -11,6 +11,7 @@ from .models import UserClasses
 import ast
 import requests
 from itertools import groupby
+from .models import Friend_Request
 
 
 def index(request):
@@ -50,6 +51,7 @@ def delete_class(request):
             id.delete()
         return HttpResponseRedirect(reverse('classes'))
 
+
 def add_classes(request):
     try:
         selected_classes = request.POST.getlist('class_to_add')
@@ -74,6 +76,7 @@ def subject_view(request, subject):
 
     return render(request, 'welcome/subject.html', {'classes': result})
 
+
 def search_classes(request):
     searchPhrase = request.POST['searchbox']
     foundClasses = []
@@ -82,6 +85,7 @@ def search_classes(request):
         if searchPhrase in thisClass["description"]:
             foundClasses.append(thisClass)
     return render(request, 'welcome/home.html', {'response': foundClasses})
+
 
 def update(request):
     try:
@@ -99,5 +103,35 @@ def update(request):
 
         for id in class_ids:
             id.available = True
+            id.search_class = str(id.subject) + str(id.catalog_number)
             id.save()
         return HttpResponseRedirect(reverse('index'))
+
+
+def send_friend_request(request, userID):
+    from_user = request.user
+    to_user = User.objects.get(id=userID)
+    friend_request, created = Friend_Request.objects.get_or_create(from_user=from_user, to_user=to_user)
+    if created:
+        return HttpResponse('friend request sent')
+    else:
+        return HttpResponse('friend request was already sent')
+
+
+def accept_friend_request(request, requestID):
+    friend_request = Friend_Request.objects.get(id=requestID)
+    if friend_request.to_user == request.user:
+        friend_request.to_user.friends.add(friend_request.from_user)
+        friend_request.from_user.friends.add(friend_request.to_user)
+        friend_request.delete()
+        return HttpResponse('friend request accepted')
+    else:
+        return HttpResponse('friend request not accepted')
+
+
+def study_partners(request):
+    if request.user.UserClasses.available == True:
+        same_classes_available = UserClasses.objects.filter(search_classes=request.user.UserClasses.search_class, available=True).exclude(id=request.user.id)
+        return render(request, 'welcome/index.html', {'user': request.user, 'other_users': same_classes_available})
+    else:
+        return render(request, 'welcome/index.html')
