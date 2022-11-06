@@ -8,6 +8,7 @@ class UserClasses(models.Model):
     component = models.CharField(max_length=10)
     section = models.IntegerField()
     professor = models.CharField(max_length=200)
+    available = models.BooleanField(default=False)
 
     def __str__(self):
         if self.professor == "-":

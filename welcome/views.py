@@ -83,3 +83,21 @@ def search_classes(request):
             foundClasses.append(thisClass)
     return render(request, 'welcome/home.html', {'response': foundClasses})
 
+def update(request):
+    try:
+        selected_classes = request.POST.getlist('class_to_update')
+        class_ids = []
+        for c in selected_classes:
+            class_ids.append(request.user.userclasses_set.get(pk=c))
+    except(KeyError):
+        return HttpResponseRedirect(reverse('index'))
+    
+    else:
+        for c in request.user.userclasses_set.all():
+            c.available = False
+            c.save()
+
+        for id in class_ids:
+            id.available = True
+            id.save()
+        return HttpResponseRedirect(reverse('index'))
