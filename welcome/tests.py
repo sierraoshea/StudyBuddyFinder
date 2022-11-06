@@ -22,7 +22,7 @@ class GoogleLoginTests(TestCase):
         self.client.login(username='test', password='test')
         response = self.client.get(reverse('index'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Welcome to Group B-03's study buddy finder website, test!")
+        self.assertContains(response, "Current Classes")
 
 
 def create_class(usr, subj, cat_num, comp, sect, prof):
