@@ -105,12 +105,9 @@ def update(request):
 
                 thisclass.students.add(request.user)
                 
-
-
             else:
                 c.available = False
                 c.save()
-
                 try:
                     thisclass = Class.objects.get(Name= c.subject + str(+c.catalog_number))
                     thisclass.students.remove(request.user)
