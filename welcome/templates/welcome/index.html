@@ -49,30 +49,40 @@
                     </div>
                     <div class="col-md-6 m-2 bg-white rounded">
                         <h3 class="text-center m-2">Find Study Buddies</h3>
-                        
-                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        {% if user.classes.all %}
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
 
-                            {% for class in user.classes.all %}
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="{{ class.Name }}-tab" data-bs-toggle="tab" data-bs-target="#{{ class.Name }}" type="button" role="tab" aria-controls="{{ class.Name }}" aria-selected="false">{{ class.Name }}</button>
-                                    </li>
-                            {% endfor %}
-                                
-                        </ul>
-                        <div class="tab-content" id="myTabContent">
-                            {% for class in user.classes.all %}
-                                    <div class="tab-pane fade" id="{{ class.Name }}" role="tabpanel" aria-labelledby="{{ class.Name }}-tab"> 
-                                        {% for student in class.students.all %}
-                                            <div class=" border-bottom border-dark d-flex flex-direction-column">
-                                                <h5 class="p-2">{{ student.first_name }} {{ student.last_name }}</h5>
-                                                <div class=" p-2 align-self-end"><button class="btn btn-success">Add Friend</button></div>
-                                            </div>
-                    
-                                            <br>
-                                        {% endfor %}
-                                    </div>
-                            {% endfor %}
-                        </div>
+                                {% for class in user.classes.all %}
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="{{ class.Name }}-tab" data-bs-toggle="tab" data-bs-target="#{{ class.Name }}" type="button" role="tab" aria-controls="{{ class.Name }}" aria-selected="false">{{ class.Name }}</button>
+                                        </li>
+                                {% endfor %}
+                                    
+                            </ul>
+                            <div class="tab-content" id="myTabContent">
+                                {% for class in user.classes.all %}
+                                        <div class="tab-pane fade" id="{{ class.Name }}" role="tabpanel" aria-labelledby="{{ class.Name }}-tab"> 
+                                            {% if class.students.all%}
+                                                {% for student in class.students.all %}
+                                                    <div class=" border-bottom border-dark clearfix">
+                                                    
+                                                        <h5 class="float-start p-2" >{{ student.first_name }} {{ student.last_name }}</h5>
+                                                        <div class="float-end p-2"><button class="btn btn-success">Send Friend Request</button></div>
+
+                                                        
+                                                    </div>
+                            
+                                                    <br>
+                                                {% endfor %}
+                                            {% else %}
+                                                <p class="text-center p-1">There are no other students currently available to study for this class :(</p>
+                                            {% endif %}
+                                        </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-center p-1">You are not currently available for any classes</p>
+                        {% endif %}
                     </div>
                     <div class="col-md-2 m-2 bg-white rounded">
                     </div>
