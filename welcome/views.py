@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
 from .forms import EditProfileForm
 from .models import UserClasses
+from .models import Class
 import ast
 import requests
 from itertools import groupby
@@ -94,10 +95,28 @@ def update(request):
     
     else:
         for c in request.user.userclasses_set.all():
-            c.available = False
-            c.save()
+            if c in class_ids:
+                c.available = True
+                c.save()
+                try:
+                    thisclass = Class.objects.get(Name = c.subject +str(c.catalog_number))
+                except:
+                    thisclass = Class.objects.create(Name =c.subject +str(c.catalog_number))
 
-        for id in class_ids:
-            id.available = True
-            id.save()
+                thisclass.students.add(request.user)
+                
+
+
+            else:
+                c.available = False
+                c.save()
+
+                try:
+                    thisclass = Class.objects.get(Name= c.subject + str(+c.catalog_number))
+                    thisclass.students.remove(request.user)
+                except:
+                    pass
+
+                
+                
         return HttpResponseRedirect(reverse('index'))

@@ -19,3 +19,8 @@ class UserClasses(models.Model):
     def as_array(self):
         return [self.subject, self.catalog_number, self.component]
 
+class Class(models.Model):
+    Name = models.CharField(max_length=150)
+    Proffessor = models.CharField(max_length=150)
+    students = models.ManyToManyField(User ,related_name = 'classes')
+
