@@ -1,10 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% load socialaccount %}
+{% load bootstrap5 %}
+{% load static %}
+
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{% include 'welcome/base.html' %}
+
+<div>
+    {% for friend_request in all_friend_requests %}
+    <button type="button">
+        <a href="/accept_friend_request/{{friend_request.id}}/">Accept Friend Request</a>
+    </button>
+    {% endfor %}
+</div>

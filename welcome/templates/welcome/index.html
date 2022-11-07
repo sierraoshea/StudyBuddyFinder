@@ -33,9 +33,9 @@
                                     </td>
                                     <td>
                                         {% if class.available %}
-                                            <input type="radio" name="class_to_update" value="{{ class.id }}" checked>
+                                            <input type="checkbox" name="class_to_update" value="{{ class.id }}" checked>
                                         {% else %}
-                                            <input type="radio" name="class_to_update" value="{{ class.id }}">
+                                            <input type="checkbox" name="class_to_update" value="{{ class.id }}">
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -49,25 +49,36 @@
                     </div>
                     <div class="col-md-6 m-2 bg-white rounded">
                         <h3 class="text-center m-2">Find Study Buddies</h3>
+
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+
+                            {% for class in user.classes.all %}
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="{{ class.Name }}-tab" data-bs-toggle="tab" data-bs-target="#{{ class.Name }}" type="button" role="tab" aria-controls="{{ class.Name }}" aria-selected="false">{{ class.Name }}</button>
+                                    </li>
+                            {% endfor %}
+
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+                            {% for class in user.classes.all %}
+                                    <div class="tab-pane fade" id="{{ class.Name }}" role="tabpanel" aria-labelledby="{{ class.Name }}-tab">
+                                        {% for student in class.students.all %}
+                                            {{ student.first_name }} {{ student.last_name }}
+                                            {% if student not in request.student.friends.all and student != request.student %}
+                                                <button type="button">
+                                                    {{student}} <a href="/send_friend_request/{{student.id}}/">Send Friend Request</a>
+                                                </button>
+                                            {% endif %}
+                                            <br>
+                                        {% endfor %}
+                                    </div>
+                            {% endfor %}
+                        </div>
                     </div>
                     <div class="col-md-2 m-2 bg-white rounded">
-                         <ul>
-                            {% for user in user_set.all %}
-                                {{ user.username }}
-                            {% endfor %}
-                             {% for class in user.userclasses_set.all %}
-                                {% if class.available %}
-                                <h1>
-                                    {% for person in other_users %}
-                                        {{ person.user.username }}
-                                    {% endfor %}
-                                </h1>
-                                {% endif %}
-                             {% endfor %}
-
-                         </ul>
                     </div>
                 </div>
             </div>
             {% endif %}
         </body>
+</form>

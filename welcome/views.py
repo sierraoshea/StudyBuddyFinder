@@ -12,6 +12,9 @@ import ast
 import requests
 from itertools import groupby
 from .models import Friend_Request
+from .models import Class
+from .models import FriendList
+
 
 
 def index(request):
@@ -95,16 +98,31 @@ def update(request):
             class_ids.append(request.user.userclasses_set.get(pk=c))
     except(KeyError):
         return HttpResponseRedirect(reverse('index'))
-    
+
     else:
         for c in request.user.userclasses_set.all():
-            c.available = False
-            c.save()
+            if c in class_ids:
+                c.available = True
+                c.save()
+                try:
+                    thisclass = Class.objects.get(Name=c.subject + str(c.catalog_number))
+                except:
+                    thisclass = Class.objects.create(Name=c.subject + str(c.catalog_number))
 
-        for id in class_ids:
-            id.available = True
-            id.search_class = str(id.subject) + str(id.catalog_number)
-            id.save()
+                thisclass.students.add(request.user)
+
+
+
+            else:
+                c.available = False
+                c.save()
+
+                try:
+                    thisclass = Class.objects.get(Name=c.subject + str(+c.catalog_number))
+                    thisclass.students.remove(request.user)
+                except:
+                    pass
+
         return HttpResponseRedirect(reverse('index'))
 
 
@@ -113,7 +131,7 @@ def send_friend_request(request, userID):
     to_user = User.objects.get(id=userID)
     friend_request, created = Friend_Request.objects.get_or_create(from_user=from_user, to_user=to_user)
     if created:
-        return HttpResponse('friend request sent')
+        return render(request, 'friend request sent')
     else:
         return HttpResponse('friend request was already sent')
 
@@ -135,3 +153,6 @@ def study_partners(request):
         return render(request, 'welcome/index.html', {'user': request.user, 'other_users': same_classes_available})
     else:
         return render(request, 'welcome/index.html')
+
+def friends(request):
+    return render(request, 'welcome/friends.html')

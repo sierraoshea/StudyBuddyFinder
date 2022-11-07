@@ -19,6 +19,9 @@
                 <li class="nav-item">
                     <a class="nav-link active text-light" aria-current="page" href="{% url 'index' %}">Home</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link active text-light" href="{% url 'friends' %}">Friends</a>
+                </li>
             </ul>
             {% if user.is_authenticated %}
             <div class="d-flex m-0" style="white-space:normal">
