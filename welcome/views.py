@@ -49,7 +49,7 @@ def delete_class(request):
     else:
         for id in class_ids:
             try:
-                thisclass = Class.objects.get(id.name +str(id.catalog_number))
+                thisclass = Class.objects.get(id.subject +str(id.catalog_number))
                 thisclass.students.remove(request.user)
             except:
                 pass
