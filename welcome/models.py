@@ -24,3 +24,6 @@ class Class(models.Model):
     Proffessor = models.CharField(max_length=150)
     students = models.ManyToManyField(User ,related_name = 'classes')
 
+class Room(models.Model):
+    name = models.CharField(max_length=255)
+    slug = models.SlugField()

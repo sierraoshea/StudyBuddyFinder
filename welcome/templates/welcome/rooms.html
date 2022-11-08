@@ -1,0 +1,8 @@
+{% include 'welcome/base.html' %}
+
+{% for room in rooms %}
+
+<h3>{{room.name}}</h3>
+<a href="{% url 'room' room.id %}" class="button">Join</a>
+
+{%endfor%}

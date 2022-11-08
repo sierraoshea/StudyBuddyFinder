@@ -12,6 +12,7 @@ from .models import Class
 import ast
 import requests
 from itertools import groupby
+from .models import Room
 
 
 def index(request):
@@ -117,3 +118,12 @@ def update(request):
                 
                 
         return HttpResponseRedirect(reverse('index'))
+
+def rooms(request):
+    rooms = Room.objects.all()
+
+    return render(request, 'welcome/rooms.html', {'rooms': rooms})
+
+
+def room(request, room_name):
+    return render(request, 'welcome/room.html', {'room_name': room_name})
