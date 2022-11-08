@@ -48,7 +48,13 @@ def delete_class(request):
         return HttpResponseRedirect(reverse('classes'))
     else:
         for id in class_ids:
+            try:
+                thisclass = Class.objects.get(id.name +str(id.catalog_number))
+                thisclass.students.remove(request.user)
+            except:
+                pass
             id.delete()
+
         return HttpResponseRedirect(reverse('classes'))
 
 def add_classes(request):
@@ -94,7 +100,9 @@ def update(request):
         return HttpResponseRedirect(reverse('index'))
     
     else:
+        
         for c in request.user.userclasses_set.all():
+            toAdd = []
             if c in class_ids:
                 c.available = True
                 c.save()
@@ -103,7 +111,7 @@ def update(request):
                 except:
                     thisclass = Class.objects.create(Name =c.subject +str(c.catalog_number))
 
-                thisclass.students.add(request.user)
+                toAdd.append(thisclass)
                 
             else:
                 c.available = False
@@ -113,7 +121,7 @@ def update(request):
                     thisclass.students.remove(request.user)
                 except:
                     pass
-
-                
+            for each in toAdd:
+                each.students.add(request.user)
                 
         return HttpResponseRedirect(reverse('index'))

@@ -1,6 +1,7 @@
 {% load socialaccount %}
 {% load bootstrap5 %}
 {% load static %}
+{% load custom_tags %}
 
 {% bootstrap_css %}
 {% bootstrap_javascript %}
@@ -62,8 +63,8 @@
                             <div class="tab-content" id="myTabContent">
                                 {% for class in user.classes.all %}
                                         <div class="tab-pane fade" id="{{ class.Name }}" role="tabpanel" aria-labelledby="{{ class.Name }}-tab"> 
-                                            {% if class.students.all%}
-                                                {% for student in class.students.all %}
+                                            {% if class.students.all|all_but_user:user %}
+                                                {% for student in class.students.all|all_but_user:user %}
                                                     <div class=" border-bottom border-dark clearfix">
                                                     
                                                         <h5 class="float-start p-2" >{{ student.first_name }} {{ student.last_name }}</h5>
