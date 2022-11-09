@@ -100,9 +100,9 @@ def update(request):
         return HttpResponseRedirect(reverse('index'))
     
     else:
-        
+        toAdd = []
         for c in request.user.userclasses_set.all():
-            toAdd = []
+            
             if c in class_ids:
                 c.available = True
                 c.save()
@@ -121,7 +121,7 @@ def update(request):
                     thisclass.students.remove(request.user)
                 except:
                     pass
-            for each in toAdd:
-                each.students.add(request.user)
+        for each in toAdd:
+            each.students.add(request.user)
                 
         return HttpResponseRedirect(reverse('index'))
