@@ -6,11 +6,37 @@
 {% bootstrap_javascript %}
 
 {% include 'welcome/base.html' %}
-
-<div>
-    {% for friend_request in all_friend_requests %}
-    <button type="button">
-        <a href="/accept_friend_request/{{friend_request.id}}/">Accept Friend Request</a>
-    </button>
-    {% endfor %}
+{% if user.is_authenticated %}
+<div class="container-fluid m-3">
+    <div class="row" data-masonry='{"percentPosition": true}'>
+        <div class="col-md-3 m-2 bg-white rounded">
+            <h3 class="text-center m-2">Friend Requests:</h3>
+            <ul class="p-2">
+                <table class="table">
+                    <thead>
+                        <td>Name</td>
+                        <td>Accept?</td>
+                    </thead>
+                    <tbody>
+                        {% for friend_request in friends %}
+                            <td>
+                                {{ friend_request.from_user }} <button type="button">
+                                    <a href="/accept_friend_request/{{friend_request.id}}/">Accept Friend Request</a></button>
+                            </td>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-center p-1">You have no pending friend requests</p>
+                {% endif %}
+            </ul>
+            </div>
+        <div class="col-md-6 m-2 bg-white rounded">
+                <h3 class="text-center m-2">Friends</h3>
+            {% for friends in FriendList.friends.all %}
+                {{ friends.first_name }} {{ friends.last_name %}
+            {% endfor %}
+            </div>
+    </div>
 </div>
+
