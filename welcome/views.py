@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
 from .forms import EditProfileForm
 from .models import UserClasses
+from .models import Class
 import ast
 import requests
 from itertools import groupby
@@ -51,7 +52,13 @@ def delete_class(request):
         return HttpResponseRedirect(reverse('classes'))
     else:
         for id in class_ids:
+            try:
+                thisclass = Class.objects.get(id.subject +str(id.catalog_number))
+                thisclass.students.remove(request.user)
+            except:
+                pass
             id.delete()
+
         return HttpResponseRedirect(reverse('classes'))
 
 
@@ -100,7 +107,9 @@ def update(request):
         return HttpResponseRedirect(reverse('index'))
 
     else:
+        toAdd = []
         for c in request.user.userclasses_set.all():
+
             if c in class_ids:
                 c.available = True
                 c.save()
@@ -109,42 +118,46 @@ def update(request):
                 except:
                     thisclass = Class.objects.create(Name=c.subject + str(c.catalog_number))
 
-                thisclass.students.add(request.user)
-
-
+                toAdd.append(thisclass)
 
             else:
                 c.available = False
                 c.save()
-
                 try:
                     thisclass = Class.objects.get(Name=c.subject + str(+c.catalog_number))
                     thisclass.students.remove(request.user)
                 except:
                     pass
+        for each in toAdd:
+            each.students.add(request.user)
 
         return HttpResponseRedirect(reverse('index'))
 
 
 def send_friend_request(request, userID):
+    print("the button worked")
     from_user = request.user
     to_user = User.objects.get(id=userID)
     friend_request, created = Friend_Request.objects.get_or_create(from_user=from_user, to_user=to_user)
     if created:
-        return render(request, 'friend request sent')
+        return HttpResponse('friend request sent')
     else:
         return HttpResponse('friend request was already sent')
 
 
 def accept_friend_request(request, requestID):
     friend_request = Friend_Request.objects.get(id=requestID)
-    if friend_request.to_user == request.user:
-        friend_request.to_user.friends.add(friend_request.from_user)
-        friend_request.from_user.friends.add(friend_request.to_user)
-        friend_request.delete()
-        return HttpResponse('friend request accepted')
-    else:
-        return HttpResponse('friend request not accepted')
+    for i in FriendList.objects.all():
+        if friend_request.to_user == i.user.userID:
+            i.friends.add(friend_request.from_user)
+            return HttpResponse('friend request accepted')
+        else:
+            friend_list = FriendList()
+            friend_list.user = friend_request.to_user
+            friend_list.add(friend_request.from_user)
+            friend_list.save()
+            return HttpResponse('friend request accepted')
+    friend_request.delete()
 
 
 def study_partners(request):
@@ -154,5 +167,9 @@ def study_partners(request):
     else:
         return render(request, 'welcome/index.html')
 
+
 def friends(request):
-    return render(request, 'welcome/friends.html')
+    friend_request = Friend_Request.objects.filter(to_user=request.user.id)
+    return render(request, 'welcome/friends.html', {'friends': friend_request})
+
+

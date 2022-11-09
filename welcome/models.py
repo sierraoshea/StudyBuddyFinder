@@ -4,7 +4,6 @@ from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 
 
-
 class UserClasses(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     subject = models.CharField(max_length=10)
@@ -38,3 +37,4 @@ class Class(models.Model):
     Name = models.CharField(max_length=150)
     Proffessor = models.CharField(max_length=150)
     students = models.ManyToManyField(User ,related_name = 'classes')
+
