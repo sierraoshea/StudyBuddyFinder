@@ -65,9 +65,11 @@
                                         {% for student in class.students.all %}
                                             {{ student.first_name }} {{ student.last_name }}
                                             {% if student not in request.student.friends.all and student != request.student %}
+                                            <div class="float-end p-2">
                                                 <button type="button">
                                                     {{student}} <a href="/send_friend_request/{{student.id}}/">Send Friend Request</a>
                                                 </button>
+                                            </div>
                                             {% endif %}
                                             <br>
                                         {% endfor %}
