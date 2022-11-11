@@ -6,6 +6,8 @@ from django.urls import reverse
 from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
+
+from django.shortcuts import redirect
 from .forms import EditProfileForm
 from .models import UserClasses
 from .models import Class
@@ -148,12 +150,15 @@ def send_friend_request(request, userID):
 
 # how do i add them to the other persons list also?
 # fix it because it is not working
+# Do i need to check if they are not in the friend list or should I be doing this in the HTML
 def accept_friend_request(request, requestID):
     friend_request = Friend_Request.objects.get(id=requestID)
     for i in FriendList.objects.all():
         if friend_request.to_user == i.user.id:
             i.friends.add(friend_request.from_user)
-            return HttpResponse('friend request accepted')
+            if request.method == "POST":
+                friend_request.delete()
+                return HttpResponseRedirect(reverse('friends'), {'friend_list': i.friends})
         # trying to add user back on both lists
         # if friend_request.from_user == i.user.userID:
             # i.friends.add(friend_request.to_user)
@@ -165,16 +170,17 @@ def accept_friend_request(request, requestID):
     friend_list.save()
         # trying to add user back on both lists
         # friend_list.from_user
-    friend_request.delete()
-    return HttpResponse('friend request accepted')
-
-
+    if request.method == "POST":
+        friend_request.delete()
+    return HttpResponseRedirect(reverse('friends'), {'friend_list': friend_list.friends})
 
 
 def decline_friend_request(request,requestID):
     friend_request = Friend_Request.objects.get(id=requestID)
-    friend_request.delete()
-    return HttpResponse("decline")
+    if request.method == "POST":
+        friend_request.delete()
+        return HttpResponseRedirect(reverse('friends'))
+    return HttpResponseRedirect(reverse('friends'))
 
 
 def study_partners(request):
@@ -190,3 +196,14 @@ def friends(request):
     return render(request, 'welcome/friends.html', {'friends': friend_request})
 
 
+# Things to ask about:
+# How to make the friends show up if they are being added to the list
+# How to make the requests disappear after they are accepted
+# How to make the button not href to a new page when sending a request and just make the button say "sent
+# How to make sure you cannot send a friend request to someone twice
+# Add a logout feature
+# Adding friends to a list that already exists
+# Adding friends to both lists once you accept them
+# Removing friends from a list
+# Fix HTML so users do not show up multiple times
+# Remove tabs so you can only look for one class at once

@@ -14,15 +14,24 @@
             <ul class="p-2">
                 <table class="table">
                     <thead>
-                        <td>Name</td>
-                        <td>Accept?</td>
+                        <td>Usernames</td>
                     </thead>
                     <tbody>
                         {% for friend_request in friends %}
+                            <!--{% if friend_request.from_user not in friend_list.all %}-->
                             <td>
-                                {{ friend_request.from_user }} <button type="button">
-                                    <a href="/accept_friend_request/{{friend_request.id}}/">Accept</a></button>
-                                    <a href="/decline_friend_request/{{friend_request.id}}/">Decline</a></button>
+                                {{ friend_request.from_user }}
+                                    <form action= "{% url 'accept friend request' friend_request.id %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="submit" value="Accept">
+                                        <form action= "{% url 'decline friend request' friend_request.id %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="submit" value="Decline">
+                                    </form>
+                                    </form>
+                                    <!-- <button type="button"><a href="/accept_friend_request/{{friend_request.id}}/">Accept</a></button>-->
+                                <!--<a href="/decline_friend_request/{{friend_request.id}}/">Decline</a></button>-->
+                             <!--{% endif %}-->
                             </td>
                         {% endfor %}
                     </tbody>
@@ -34,11 +43,10 @@
             </div>
         <div class="col-md-6 m-2 bg-white rounded">
                 <h3 class="text-center m-2">Friends</h3>
-            {% for friend in user.FriendList.friends.all %}
-                {{ friend.first_name }} {{ friend.last_name }}
+            {% for friend in friend_list.all %}
+                    {{ friend.first_name }} {{ friend.last_name }}
             {% endfor %}
-
-            </div>
+        </div>
     </div>
 </div>
 
