@@ -141,9 +141,9 @@ def send_friend_request(request, userID):
     to_user = User.objects.get(id=userID)
     friend_request, created = Friend_Request.objects.get_or_create(from_user=from_user, to_user=to_user)
     if created:
-        return HttpResponse('friend request sent')
+        return HttpResponseRedirect(reverse('index'))
     else:
-        return HttpResponse('friend request was already sent')
+        return HttpResponseRedirect(reverse('index'))
 
 # cannot get send friend requests to show up
 
@@ -153,26 +153,46 @@ def send_friend_request(request, userID):
 # Do i need to check if they are not in the friend list or should I be doing this in the HTML
 def accept_friend_request(request, requestID):
     friend_request = Friend_Request.objects.get(id=requestID)
-    for i in FriendList.objects.all():
-        if friend_request.to_user == i.user.id:
-            i.friends.add(friend_request.from_user)
-            if request.method == "POST":
-                friend_request.delete()
-                return HttpResponseRedirect(reverse('friends'), {'friend_list': i.friends})
+    current_list = FriendList.objects.select_related().filter(user=request.user.id)
+    if not current_list.exists():
+        friend_list = FriendList()
+        friend_list.user = friend_request.to_user
+        friend_list.save()
+        friend_list.friends.add(friend_request.from_user)
+        friend_list.save()
+        # trying to add user back on both lists
+        # friend_list.from_user
+        if request.method == "POST":
+            friend_request.delete()
+        return HttpResponseRedirect(reverse('friends'), {'friend_list': friend_list.friends})
+    for i in current_list:
+        i.friends.add(friend_request.from_user)
+        if request.method == "POST":
+            friend_request.delete()
+            return HttpResponseRedirect(reverse('friends'), {'friend_list': i.friends})
+
+
+    #for i in FriendList.objects.all():
+        #if friend_request.to_user.id == i.user.id:
+            #i.friends.add(friend_request.from_user)
+            #if request.method == "POST":
+                #friend_request.delete()
+                #return HttpResponseRedirect(reverse('friends'), {'friend_list': i.friends})
+            #return HttpResponseRedirect(reverse('friends'), {'friend_list': i.friends})
         # trying to add user back on both lists
         # if friend_request.from_user == i.user.userID:
             # i.friends.add(friend_request.to_user)
 
-    friend_list = FriendList()
-    friend_list.user = friend_request.to_user
-    friend_list.save()
-    friend_list.friends.add(friend_request.from_user)
-    friend_list.save()
+    #friend_list = FriendList()
+    #friend_list.user = friend_request.to_user
+    #friend_list.save()
+    #friend_list.friends.add(friend_request.from_user)
+    #friend_list.save()
         # trying to add user back on both lists
         # friend_list.from_user
-    if request.method == "POST":
-        friend_request.delete()
-    return HttpResponseRedirect(reverse('friends'), {'friend_list': friend_list.friends})
+    #if request.method == "POST":
+        #friend_request.delete()
+    #return HttpResponseRedirect(reverse('friends'), {'friend_list': friend_list.friends})
 
 
 def decline_friend_request(request,requestID):
@@ -192,18 +212,20 @@ def study_partners(request):
 
 
 def friends(request):
+    current_list = FriendList.objects.select_related().filter(user=request.user.id)
+    friend_list = current_list.first().friends
     friend_request = Friend_Request.objects.filter(to_user=request.user.id)
-    return render(request, 'welcome/friends.html', {'friends': friend_request})
+    return render(request, 'welcome/friends.html', {'friends': friend_request, 'friend_list': friend_list})
 
 
 # Things to ask about:
 # How to make the friends show up if they are being added to the list
 # How to make the requests disappear after they are accepted
-# How to make the button not href to a new page when sending a request and just make the button say "sent
+# How to disable a button and make it say sent after friend request was sent
 # How to make sure you cannot send a friend request to someone twice
 # Add a logout feature
 # Adding friends to a list that already exists
 # Adding friends to both lists once you accept them
 # Removing friends from a list
-# Fix HTML so users do not show up multiple times
+# Fix HTML so users do not show up multiple times when trying to find buddies
 # Remove tabs so you can only look for one class at once
