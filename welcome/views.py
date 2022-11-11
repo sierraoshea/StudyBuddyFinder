@@ -135,7 +135,6 @@ def update(request):
 
 
 def send_friend_request(request, userID):
-    print("the button worked")
     from_user = request.user
     to_user = User.objects.get(id=userID)
     friend_request, created = Friend_Request.objects.get_or_create(from_user=from_user, to_user=to_user)
@@ -144,20 +143,38 @@ def send_friend_request(request, userID):
     else:
         return HttpResponse('friend request was already sent')
 
+# cannot get send friend requests to show up
 
+
+# how do i add them to the other persons list also?
+# fix it because it is not working
 def accept_friend_request(request, requestID):
     friend_request = Friend_Request.objects.get(id=requestID)
     for i in FriendList.objects.all():
-        if friend_request.to_user == i.user.userID:
+        if friend_request.to_user == i.user.id:
             i.friends.add(friend_request.from_user)
             return HttpResponse('friend request accepted')
-        else:
-            friend_list = FriendList()
-            friend_list.user = friend_request.to_user
-            friend_list.add(friend_request.from_user)
-            friend_list.save()
-            return HttpResponse('friend request accepted')
+        # trying to add user back on both lists
+        # if friend_request.from_user == i.user.userID:
+            # i.friends.add(friend_request.to_user)
+
+    friend_list = FriendList()
+    friend_list.user = friend_request.to_user
+    friend_list.save()
+    friend_list.friends.add(friend_request.from_user)
+    friend_list.save()
+        # trying to add user back on both lists
+        # friend_list.from_user
     friend_request.delete()
+    return HttpResponse('friend request accepted')
+
+
+
+
+def decline_friend_request(request,requestID):
+    friend_request = Friend_Request.objects.get(id=requestID)
+    friend_request.delete()
+    return HttpResponse("decline")
 
 
 def study_partners(request):

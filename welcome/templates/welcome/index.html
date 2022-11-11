@@ -60,23 +60,25 @@
                                 {% endfor %}
                                     
                             </ul>
-                            <div class="tab-content" id="myTabContent">
+                           <!-- <div class="tab-content" id="myTabContent"> -->
                                 {% for class in user.classes.all %}
-                                        <div class="tab-pane fade" id="{{ class.Name }}" role="tabpanel" aria-labelledby="{{ class.Name }}-tab"> 
+                                        <!--<div class="tab-pane fade" id="{{ class.Name }}" role="tabpanel" aria-labelledby="{{ class.Name }}-tab"> -->
                                             {% for student in class.students.all %}
                                                     <div class=" border-bottom border-dark clearfix">
-                                                    {% if class.students.all|all_but_user:user %}
-                                                        {% for student in class.students.all|all_but_user:user %}
+                                                    <!--{% if class.students.all|all_but_user:user %}
+                                                        {% for student in class.students.all|all_but_user:user %}-->
+                                                            <li>
                                                             <h5 class="float-start p-2" > {{ student.first_name }} {{ student.last_name }}</h5>
                                                             <button type="button">
                                                                     <a href="/send_friend_request/{{student.id}}/">Send Friend Request</a>
                                                                 </button>
-                                                            <!--{% if student not in request.student.friends.all and student != request.student %}-->
-                                                                <div class="float-end p-2">
+                                                            </li>
+                                                            {% if student not in request.student.FriendList.friends.all %}
+                                                                <!--<div class="float-end p-2">
                                                                 <button type="button">
                                                                     <a href="/send_friend_request/{{student.id}}/">Send Friend Request</a>
                                                                 </button>
-                                                                    </div>
+                                                                    </div>-->
                                                                 </div>
                                                             <br>
 

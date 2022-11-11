@@ -21,21 +21,23 @@
                         {% for friend_request in friends %}
                             <td>
                                 {{ friend_request.from_user }} <button type="button">
-                                    <a href="/accept_friend_request/{{friend_request.id}}/">Accept Friend Request</a></button>
+                                    <a href="/accept_friend_request/{{friend_request.id}}/">Accept</a></button>
+                                    <a href="/decline_friend_request/{{friend_request.id}}/">Decline</a></button>
                             </td>
                         {% endfor %}
                     </tbody>
                 </table>
                 {% else %}
-                <p class="text-center p-1">You have no pending friend requests</p>
+                    <p class="text-center p-1">You have no pending friend requests</p>
                 {% endif %}
             </ul>
             </div>
         <div class="col-md-6 m-2 bg-white rounded">
                 <h3 class="text-center m-2">Friends</h3>
-            {% for friends in FriendList.friends.all %}
-                {{ friends.first_name }} {{ friends.last_name %}
+            {% for friend in user.FriendList.friends.all %}
+                {{ friend.first_name }} {{ friend.last_name }}
             {% endfor %}
+
             </div>
     </div>
 </div>
