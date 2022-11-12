@@ -24,3 +24,15 @@ class Class(models.Model):
     Proffessor = models.CharField(max_length=150)
     students = models.ManyToManyField(User ,related_name = 'classes')
 
+class Day(models.Model):
+    day = models.CharField(max_length=2)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class Time(models.Model):
+    available = models.BooleanField(default =False)
+    day = models.ForeignKey(Day, on_delete=models.CASCADE)
+    time = models.CharField(max_length = 10)
+
+    
+        
+
