@@ -18,7 +18,7 @@ from itertools import groupby
 
 def index(request):
  
-    if not request.user.day_set.all() and request.user.is_authenticated():
+    if not request.user.day_set.all() and request.user.is_authenticated:
         days = ['M','T','W','Th','F','Sa','Su']
         for day in days:
             thisday = Day.objects.create(user= request.user, day = day)
