@@ -213,8 +213,15 @@ def study_partners(request):
 
 def friends(request):
     current_list = FriendList.objects.select_related().filter(user=request.user.id)
-    friend_list = current_list.first().friends
-    friend_request = Friend_Request.objects.filter(to_user=request.user.id)
+    try:
+        friend_list = current_list.first().friends
+    except(AttributeError):
+        friend_list = []
+
+    try:
+        friend_request = Friend_Request.objects.filter(to_user=request.user.id)
+    except(AttributeError):
+        friend_request = []
     return render(request, 'welcome/friends.html', {'friends': friend_request, 'friend_list': friend_list})
 
 
