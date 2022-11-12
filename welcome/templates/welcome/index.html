@@ -50,6 +50,7 @@
                     </div>
                     <div class="col-md-6 m-2 bg-white rounded">
                         <h3 class="text-center m-2">Find Study Buddies</h3>
+                        
                         {% if user.classes.all %}
                             <ul class="nav nav-tabs" id="myTab" role="tablist">
 
@@ -66,8 +67,10 @@
                                             {% if class.students.all|all_but_user:user %}
                                                 {% for student in class.students.all|all_but_user:user %}
                                                     <div class=" border-bottom border-dark clearfix">
-                                                    
-                                                        <h5 class="float-start p-2" >{{ student.first_name }} {{ student.last_name }}</h5>
+                                                        <a href="{% url 'viewuser' student.id %}">
+                                                            <h5 class="float-start p-2" >{{ student.first_name }} {{ student.last_name }}</h5>
+                                                        </a>
+                                                        
                                                         <div class="float-end p-2"><button class="btn btn-success">Send Friend Request</button></div>
 
                                                         

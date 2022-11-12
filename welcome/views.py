@@ -1,7 +1,7 @@
 from django.views import generic
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.urls import reverse_lazy
 from django.contrib.auth.models import User
@@ -89,6 +89,11 @@ def search_classes(request):
         if searchPhrase in thisClass["description"]:
             foundClasses.append(thisClass)
     return render(request, 'welcome/home.html', {'response': foundClasses})
+
+def view_other_user(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    return render(request, 'welcome/other_profile.html', {'user' : user} )
+
 
 def update(request):
     try:
