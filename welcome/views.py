@@ -9,12 +9,23 @@ from django.contrib.auth.forms import UserChangeForm
 from .forms import EditProfileForm
 from .models import UserClasses
 from .models import Class
+from .models import Time
+from .models import Day
 import ast
 import requests
 from itertools import groupby
 
 
 def index(request):
+ 
+    if not request.user.day_set.all() and request.user.is_authenticated:
+        days = ['M','T','W','Th','F','Sa','Su']
+        for day in days:
+            thisday = Day.objects.create(user= request.user, day = day)
+            for j in range(10, 23):
+                Time.objects.create(day = thisday, time = str(j)+":00")
+            
+
     return render(request, 'welcome/index.html')
 
 
@@ -130,3 +141,24 @@ def update(request):
             each.students.add(request.user)
                 
         return HttpResponseRedirect(reverse('index'))
+
+def updateTimes(request):
+    try:
+        ids = request.POST.getlist('available_times')
+    except(KeyError):
+        return HttpResponseRedirect(reverse('index'))
+
+    
+    
+    for day in request.user.day_set.all():
+        for time in day.time_set.all():
+            if day.day+time.time in ids:
+                time.available = True
+                time.save()
+            else:
+                time.available = False
+                time.save()
+
+        
+
+    return HttpResponseRedirect(reverse('index'))

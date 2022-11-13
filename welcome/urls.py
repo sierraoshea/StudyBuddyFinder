@@ -15,5 +15,6 @@ urlpatterns = [
     path('profile/edit_classes/<str:subject>/', views.subject_view, name='class_view'),
     path('viewuser/<int:user_id>/', views.view_other_user, name='viewuser'),
     path('classes/search', views.search_classes, name ='search'),
-    path('update', views.update, name='update')
+    path('update', views.update, name='update'),
+    path('updatetimes', views.updateTimes, name='updatetimes')
 ]
