@@ -71,11 +71,11 @@
                                                         {% for student in class.students.all|all_but_user:user %}
                                                             <li>
                                                             <h5 class="float-start p-2" > {{ student.first_name }} {{ student.last_name }}</h5>
-                                                            <form>
-                                                                <button type="button">
-                                                                    <a href="/send_friend_request/{{student.id}}/">Send Friend Request</a>
-                                                                </button>
-                                                            </form>
+                                                                <form>
+                                                                    <button type="button">
+                                                                        <a href="/send_friend_request/{{student.id}}/">Send Friend Request</a>
+                                                                    </button>
+                                                                </form>
                                                             </li>
                                                     {% endfor %}
                                                     {% else %}

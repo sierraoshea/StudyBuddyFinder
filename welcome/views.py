@@ -139,18 +139,15 @@ def update(request):
 def send_friend_request(request, userID):
     from_user = request.user
     to_user = User.objects.get(id=userID)
+    current_list = FriendList.objects.select_related().filter(user=request.user.id)
+    friend_list = current_list.first().friends
     friend_request, created = Friend_Request.objects.get_or_create(from_user=from_user, to_user=to_user)
     if created:
-        return HttpResponseRedirect(reverse('index'))
+        return HttpResponseRedirect(reverse('index'), {'friend_list': friend_list})
     else:
-        return HttpResponseRedirect(reverse('index'))
-
-# cannot get send friend requests to show up
+        return HttpResponseRedirect(reverse('index'), {'friend_list': friend_list})
 
 
-# how do i add them to the other persons list also?
-# fix it because it is not working
-# Do i need to check if they are not in the friend list or should I be doing this in the HTML
 def accept_friend_request(request, requestID):
     friend_request = Friend_Request.objects.get(id=requestID)
     current_list = FriendList.objects.select_related().filter(user=request.user.id)
@@ -219,13 +216,9 @@ def friends(request):
 
 
 # Things to ask about:
-# How to make the friends show up if they are being added to the list
-# How to make the requests disappear after they are accepted
 # How to disable a button and make it say sent after friend request was sent
 # How to make sure you cannot send a friend request to someone twice
 # Add a logout feature
-# Adding friends to a list that already exists
 # Adding friends to both lists once you accept them
 # Removing friends from a list
 # Fix HTML so users do not show up multiple times when trying to find buddies
-# Remove tabs so you can only look for one class at once
