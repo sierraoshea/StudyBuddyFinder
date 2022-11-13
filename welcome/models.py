@@ -24,6 +24,7 @@ class Class(models.Model):
     Proffessor = models.CharField(max_length=150)
     students = models.ManyToManyField(User ,related_name = 'classes')
 
-class Room(models.Model):
-    name = models.CharField(max_length=255)
-    slug = models.SlugField()
+class UserToUserChat(models.Model):
+    user1 = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name = 'user1')
+    user2 = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name = 'user2')
+    roomName = models.CharField(max_length=128, unique=True)
