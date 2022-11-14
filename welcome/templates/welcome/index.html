@@ -77,9 +77,10 @@
                                 <div class="float-end p-2"><button class="btn btn-success" type="submit">Send Friend Request</button></div>
                                 
                                 <input type="submit" value="Update Availibility">
-                                {% else %}
+                            {%endfor%}
+                            {% else %}
                                 <p class="text-center p-1">You have no classes added to your profile.</p>
-                                {% endif %}
+                            {% endif %}
                             </form>
                         </div>
                         
