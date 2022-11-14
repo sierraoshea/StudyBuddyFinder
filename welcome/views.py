@@ -1,16 +1,14 @@
 from django.views import generic
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
+from django.http import HttpResponseBadRequest
 from django.shortcuts import render
 from django.urls import reverse
 from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
 from .forms import EditProfileForm
-from .models import UserClasses
-from .models import Class
-from .models import Time
-from .models import Day
+from .models import UserClasses, Class, UserToUserChat, Time, Day 
 import ast
 import requests
 from itertools import groupby
@@ -137,6 +135,23 @@ def update(request):
                 
         return HttpResponseRedirect(reverse('index'))
 
+def rooms(request):
+    
+    rooms = UserToUserChat.objects.filter(user1=request.user) | UserToUserChat.objects.filter(user2=request.user)
+
+    return render(request, 'welcome/rooms.html', {'rooms': rooms})
+
+
+def room(request, room_name):
+    if not UserToUserChat.objects.filter(roomName=room_name):
+        return HttpResponseRedirect(reverse('index')) #doesn't exist
+    
+    room = UserToUserChat.objects.get(roomName=room_name)
+    if(request.user != room.user1 and request.user != room.user2):
+        return HttpResponseRedirect(reverse('index')) #not allowed
+    
+    return render(request, 'welcome/room.html', {'room_name': room_name})
+  
 def updateTimes(request):
     try:
         ids = request.POST.getlist('available_times')
