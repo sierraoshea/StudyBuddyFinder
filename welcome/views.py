@@ -127,7 +127,10 @@ def update(request):
         return HttpResponseRedirect(reverse('index'))
 
 def rooms(request):
-    return render(request, 'welcome/rooms.html')
+    
+    rooms = UserToUserChat.objects.filter(user1=request.user) | UserToUserChat.objects.filter(user2=request.user)
+
+    return render(request, 'welcome/rooms.html', {'rooms': rooms})
 
 
 def room(request, room_name):

@@ -2,7 +2,13 @@
 
 {% for room in rooms %}
 
-<h3>{{room.name}}</h3>
-<a href="{% url 'room' room.id %}" class="button">Join</a>
+{% if room.user1 == user %}
+<a href="{% url 'room' room.roomName %}" class="button">Chat with {{room.user2}}</a>
+
+{% else %}
+
+<a href="{% url 'room' room.roomName %}" class="button">Chat with {{room.user1}}</a>
+
+{%endif%}
 
 {%endfor%}
