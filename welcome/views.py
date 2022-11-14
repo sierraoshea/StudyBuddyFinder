@@ -132,10 +132,10 @@ def rooms(request):
 
 def room(request, room_name):
     if not UserToUserChat.objects.filter(roomName=room_name):
-        return HttpResponseBadRequest() #doesn't exist
+        return HttpResponseRedirect(reverse('index')) #doesn't exist
     
     room = UserToUserChat.objects.get(roomName=room_name)
     if(request.user != room.user1 and request.user != room.user2):
-        return HttpResponseBadRequest() #not allowed
+        return HttpResponseRedirect(reverse('index')) #not allowed
     
     return render(request, 'welcome/room.html', {'room_name': room_name})
