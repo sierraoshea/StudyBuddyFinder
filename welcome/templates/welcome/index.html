@@ -53,10 +53,9 @@
             </div>
             <div class="col-md-6 m-2 bg-white rounded">
 
-                    <h3 class="text-center m-2">Find Study Buddies</h3>
+                <h3 class="text-center m-2">Find Study Buddies</h3>
                     {% if user.classes.all %}
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
-
                         {% for class in user.classes.all %}
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="{{ class.Name }}-tab" data-bs-toggle="tab" data-bs-target="#{{ class.Name }}" type="button" role="tab" aria-controls="{{ class.Name }}" aria-selected="false">{{ class.Name }}</button>
@@ -72,13 +71,10 @@
                             <div class=" border-bottom border-dark clearfix">
                                 <form action="{% url 'send friend request' student.id %}" method="post">
                                     {% csrf_token %}
-
                                 <h5 class="float-start p-2" >{{ student.first_name }} {{ student.last_name }}</h5>
                                 <div class="float-end p-2"><button class="btn btn-success" type="submit">Send Friend Request</button></div>
                                 </form>
-
                             </div>
-
                             <br>
                             {% endfor %}
                             {% else %}
@@ -95,6 +91,5 @@
             </div>
         </div>
     </div>
-
     {% endif %}
 </body>
