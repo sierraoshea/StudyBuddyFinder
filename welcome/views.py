@@ -7,10 +7,12 @@ from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
 from .forms import EditProfileForm
+from .forms import MeetingForm
 from .models import UserClasses
 from .models import Class
 from .models import Time
 from .models import Day
+from .models import meeting
 import ast
 import requests
 from itertools import groupby
@@ -154,6 +156,24 @@ def updateTimes(request):
                 time.available = False
                 time.save()
 
-        
+
 
     return HttpResponseRedirect(reverse('index'))
+
+def new_meeting(request, reciever_id):
+    reciever = User.objects.get(pk=reciever_id)
+    meet_form = MeetingForm()
+    return render(request, "welcome/newmeeting.html", {'reciever' : reciever, 'form': meet_form})
+
+def confirm_meeting(request, reciever_id):
+    reciever = User.objects.get(pk=reciever_id)
+    title = request.POST.get('title')
+    date = request.POST.get('date')
+    time = request.POST.get('time')
+
+    newmeeting= meeting.objects.create(title=title, date=date, time=time)
+    newmeeting.participants.add(request.user, reciever)
+    newmeeting.save()
+
+    return HttpResponseRedirect(reverse('index'))
+

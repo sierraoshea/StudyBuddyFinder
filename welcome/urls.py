@@ -15,5 +15,7 @@ urlpatterns = [
     path('profile/edit_classes/<str:subject>/', views.subject_view, name='class_view'),
     path('classes/search', views.search_classes, name ='search'),
     path('update', views.update, name='update'),
-    path('updatetimes', views.updateTimes, name='updatetimes')
+    path('updatetimes', views.updateTimes, name='updatetimes'),
+    path('newmeeting/<int:reciever_id>', views.new_meeting, name='newmeeting'),
+    path('newmeeting/<int:reciever_id>/submit', views.confirm_meeting, name='confmeeting')
 ]

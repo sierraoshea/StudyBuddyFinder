@@ -33,6 +33,12 @@ class Time(models.Model):
     day = models.ForeignKey(Day, on_delete=models.CASCADE)
     time = models.CharField(max_length = 10)
 
+class meeting(models.Model):
+    date = models.DateField()
+    time = models.TimeField()
+    title = models.CharField(max_length=150)
+    participants = models.ManyToManyField(User, related_name='meetings')
+
     
         
 
