@@ -16,5 +16,8 @@ urlpatterns = [
     path('viewuser/<int:user_id>/', views.view_other_user, name='viewuser'),
     path('classes/search', views.search_classes, name ='search'),
     path('update', views.update, name='update'),
+    path('chat/', views.rooms, name='rooms'),
+    path('chat/<str:room_name>', views.room, name='room'),
     path('updatetimes', views.updateTimes, name='updatetimes')
+
 ]

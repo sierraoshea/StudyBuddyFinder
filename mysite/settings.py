@@ -25,7 +25,7 @@ SECRET_KEY = 'r!f&huah0tell@cbbf(3zjgu6u7d_2vcxzjjv2lh31q1h)xr#l'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1','b-03-study-buddy-finder.herokuapp.com']
+ALLOWED_HOSTS = ['localhost','127.0.0.1','b-03-study-buddy-finder.herokuapp.com','*']
 
 
 # Application definition
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'welcome.apps.WelcomeConfig',
     'bootstrap5',
+    'channels',
 ]
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
@@ -81,6 +82,17 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
+ASGI_APPLICATION = 'mysite.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379')],
+        },
+    },
+}
+
 
 
 # Database
