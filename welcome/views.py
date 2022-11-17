@@ -170,3 +170,6 @@ def updateTimes(request):
         
 
     return HttpResponseRedirect(reverse('index'))
+
+def page(request):
+    return render(request,'index.html')
