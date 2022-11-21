@@ -222,6 +222,8 @@ def friends(request):
     return render(request, 'welcome/friends.html', {'friends': friend_request, 'friend_list': friend_list})
 
 
+
+
 # Things to ask about:
 # How to disable a button and make it say sent after friend request was sent
 # How to make sure you cannot send a friend request to someone twice
