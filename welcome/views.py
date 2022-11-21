@@ -8,8 +8,8 @@ from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
 from .forms import EditProfileForm
-from .models import UserClasses, Class, UserToUserChat, Time, Day 
-import ast
+from .models import UserClasses, Class, UserToUserChat, Time, Day, Message
+import json
 import requests
 from itertools import groupby
 
@@ -143,14 +143,16 @@ def rooms(request):
 
 
 def room(request, room_name):
+
     if not UserToUserChat.objects.filter(roomName=room_name):
         return HttpResponseRedirect(reverse('index')) #doesn't exist
     
     room = UserToUserChat.objects.get(roomName=room_name)
+    messages = Message.objects.filter(room=room).order_by('-date_added')[:20:-1]
     if(request.user != room.user1 and request.user != room.user2):
         return HttpResponseRedirect(reverse('index')) #not allowed
     
-    return render(request, 'welcome/room.html', {'room_name': room_name})
+    return render(request, 'welcome/room2.html', {'room_name': room_name, 'messages': messages})
   
 def updateTimes(request):
     try:

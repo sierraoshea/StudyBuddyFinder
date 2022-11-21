@@ -37,3 +37,12 @@ class Time(models.Model):
     available = models.BooleanField(default =False)
     day = models.ForeignKey(Day, on_delete=models.CASCADE)
     time = models.CharField(max_length = 10)
+
+class Message(models.Model):
+    room = models.ForeignKey(UserToUserChat, related_name='chat', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='messages', on_delete=models.CASCADE)
+    content = models.TextField()
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ('date_added',)
