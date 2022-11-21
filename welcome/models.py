@@ -38,3 +38,16 @@ class Class(models.Model):
     Proffessor = models.CharField(max_length=150)
     students = models.ManyToManyField(User ,related_name = 'classes')
 
+class UserToUserChat(models.Model):
+    user1 = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name = 'user1')
+    user2 = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name = 'user2')
+    roomName = models.CharField(max_length=128, unique=True)
+    
+class Day(models.Model):
+    day = models.CharField(max_length=2)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class Time(models.Model):
+    available = models.BooleanField(default =False)
+    day = models.ForeignKey(Day, on_delete=models.CASCADE)
+    time = models.CharField(max_length = 10)

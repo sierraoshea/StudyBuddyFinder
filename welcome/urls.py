@@ -19,4 +19,8 @@ urlpatterns = [
     path('accept_friend_request/<int:requestID>/', views.accept_friend_request, name='accept friend request'),
     path('decline_friend_request/<int:requestID>/', views.decline_friend_request, name='decline friend request'),
     path('friends', views.friends, name='friends'),
+    path('chat/', views.rooms, name='rooms'),
+    path('chat/<str:room_name>', views.room, name='room'),
+    path('updatetimes', views.updateTimes, name='updatetimes')
+
 ]

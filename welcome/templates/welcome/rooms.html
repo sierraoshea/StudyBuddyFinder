@@ -1,0 +1,14 @@
+{% include 'welcome/base.html' %}
+
+{% for room in rooms %}
+
+{% if room.user1 == user %}
+<a href="{% url 'room' room.roomName %}" class="button">Chat with {{room.user2}}</a>
+
+{% else %}
+
+<a href="{% url 'room' room.roomName %}" class="button">Chat with {{room.user1}}</a>
+
+{%endif%}
+
+{%endfor%}
