@@ -156,7 +156,11 @@ def send_friend_request(request, userID):
     else:
         return HttpResponseRedirect(reverse('index'), {'friend_list': friend_list})
 
-
+# sierra sends ashley a frined request
+# ashley accepts the request, sierra is on ashley's friend list
+# ashley is on sierra's friend list
+# ashley = request.user.id, to_user
+# sierra = from_user
 def accept_friend_request(request, requestID):
     friend_request = Friend_Request.objects.get(id=requestID)
     current_list = FriendList.objects.select_related().filter(user=request.user.id)
@@ -166,6 +170,7 @@ def accept_friend_request(request, requestID):
         friend_list.save()
         friend_list.friends.add(friend_request.from_user)
         friend_list.save()
+        add_friend_back(friend_request.from_user, friend_request.to_user)
         # trying to add user back on both lists
         # friend_list.from_user
         if request.method == "POST":
@@ -173,9 +178,26 @@ def accept_friend_request(request, requestID):
         return HttpResponseRedirect(reverse('friends'), {'friend_list': friend_list.friends})
     for i in current_list:
         i.friends.add(friend_request.from_user)
+        add_friend_back(friend_request.from_user, friend_request.to_user)
         if request.method == "POST":
             friend_request.delete()
             return HttpResponseRedirect(reverse('friends'), {'friend_list': i.friends})
+
+
+def add_friend_back(to_user, from_user):
+    current_list = FriendList.objects.select_related().filter(user=to_user)
+    if not current_list.exists():
+        friend_list = FriendList()
+        friend_list.user = to_user
+        friend_list.save()
+        friend_list.friends.add(from_user)
+        friend_list.save()
+        return HttpResponseRedirect(reverse('friends'), {'friend_list': friend_list.friends})
+    for i in current_list:
+        i.friends.add(from_user)
+        return HttpResponseRedirect(reverse('friends'), {'friend_list': i.friends})
+
+
 
 
     #for i in FriendList.objects.all():
