@@ -21,6 +21,7 @@ urlpatterns = [
     path('friends', views.friends, name='friends'),
     path('chat/', views.rooms, name='rooms'),
     path('chat/<str:room_name>', views.room, name='room'),
-    path('updatetimes', views.updateTimes, name='updatetimes')
+    path('updatetimes', views.updateTimes, name='updatetimes'),
+    path('remove_friend/<int:userID>/', views.remove_friend, name='remove friend'),
 
 ]

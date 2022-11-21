@@ -42,6 +42,10 @@
                 <h3 class="text-center m-2">Friends</h3>
             {% for friend in friend_list.all %}
                 <p>{{ friend.first_name }} {{ friend.last_name }}</p>
+                 <form action= "{% url 'remove friend' friend.id %}" method="POST">
+                     {% csrf_token %}
+                     <input type="submit" value="Remove">
+                 </form>
             {% endfor %}
         </div>
     </div>

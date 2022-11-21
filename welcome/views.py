@@ -28,10 +28,12 @@ def index(request):
                 thisday = Day.objects.create(user= request.user, day = day)
                 for j in range(10, 23):
                     Time.objects.create(day = thisday, time = str(j)+":00")
-            
 
+        #current_list = FriendList.objects.select_related().filter(user=request.user.id)
+        #if current_list.exists():
+            #friend_list = current_list.first().friends
+    #return render(request, 'welcome/index.html', {'friends': friend_list})
     return render(request, 'welcome/index.html')
-
 
 class EditView(generic.UpdateView):
     form_class = EditProfileForm
@@ -156,11 +158,7 @@ def send_friend_request(request, userID):
     else:
         return HttpResponseRedirect(reverse('index'), {'friend_list': friend_list})
 
-# sierra sends ashley a frined request
-# ashley accepts the request, sierra is on ashley's friend list
-# ashley is on sierra's friend list
-# ashley = request.user.id, to_user
-# sierra = from_user
+
 def accept_friend_request(request, requestID):
     friend_request = Friend_Request.objects.get(id=requestID)
     current_list = FriendList.objects.select_related().filter(user=request.user.id)
@@ -198,37 +196,28 @@ def add_friend_back(to_user, from_user):
         return HttpResponseRedirect(reverse('friends'), {'friend_list': i.friends})
 
 
-
-
-    #for i in FriendList.objects.all():
-        #if friend_request.to_user.id == i.user.id:
-            #i.friends.add(friend_request.from_user)
-            #if request.method == "POST":
-                #friend_request.delete()
-                #return HttpResponseRedirect(reverse('friends'), {'friend_list': i.friends})
-            #return HttpResponseRedirect(reverse('friends'), {'friend_list': i.friends})
-        # trying to add user back on both lists
-        # if friend_request.from_user == i.user.userID:
-            # i.friends.add(friend_request.to_user)
-
-    #friend_list = FriendList()
-    #friend_list.user = friend_request.to_user
-    #friend_list.save()
-    #friend_list.friends.add(friend_request.from_user)
-    #friend_list.save()
-        # trying to add user back on both lists
-        # friend_list.from_user
-    #if request.method == "POST":
-        #friend_request.delete()
-    #return HttpResponseRedirect(reverse('friends'), {'friend_list': friend_list.friends})
-
-
-def decline_friend_request(request,requestID):
+def decline_friend_request(request, requestID):
     friend_request = Friend_Request.objects.get(id=requestID)
     if request.method == "POST":
         friend_request.delete()
         return HttpResponseRedirect(reverse('friends'))
     return HttpResponseRedirect(reverse('friends'))
+
+
+def remove_friend(request, userID):
+    if request.method == "POST":
+        from_user = request.user.id
+        to_user = User.objects.get(id=userID)
+        to_user_friendlist = FriendList.objects.select_related().filter(user=to_user)
+        if to_user_friendlist.exists():
+            for i in to_user_friendlist:
+                i.friends.remove(from_user)
+                return HttpResponseRedirect(reverse('friends'), {'friend_list': i.friends})
+        from_user_friendlist = FriendList.objects.select_related().filter(user=from_user)
+        if from_user_friendlist.exists():
+            for j in from_user_friendlist:
+                j.friends.remove(to_user)
+                return HttpResponseRedirect(reverse('friends'), {'friend_list': j.friends})
 
 
 def study_partners(request):
@@ -269,7 +258,8 @@ def room(request, room_name):
         return HttpResponseRedirect(reverse('index')) #not allowed
     
     return render(request, 'welcome/room.html', {'room_name': room_name})
-  
+
+
 def updateTimes(request):
     try:
         ids = request.POST.getlist('available_times')
@@ -290,10 +280,9 @@ def updateTimes(request):
 def page(request):
     return render(request,'index.html')
 
+
 # Things to ask about:
 # How to disable a button and make it say sent after friend request was sent
 # How to make sure you cannot send a friend request to someone twice
 # Add a logout feature
-# Adding friends to both lists once you accept them
 # Removing friends from a list
-# Fix HTML so users do not show up multiple times when trying to find buddies
