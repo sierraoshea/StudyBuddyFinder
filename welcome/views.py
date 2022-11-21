@@ -186,7 +186,7 @@ def confirm_meeting(request, reciever_id):
     try:
         newmeeting= meeting.objects.create(title=title, date=date, time=time)
     except(ValidationError):
-        return render(request, "welcome/newmeeting.html", {'reciever' : reciever, 'errmsg':'Please fill out all fields'})
+        return render(request, "welcome/newmeeting.html", {'reciever' : reciever, 'errmsg':'Please fill out all fields.'})
     newmeeting.participants.add(request.user, reciever)
     newmeeting.save()
 
