@@ -17,5 +17,8 @@ urlpatterns = [
     path('update', views.update, name='update'),
     path('updatetimes', views.updateTimes, name='updatetimes'),
     path('newmeeting/<int:reciever_id>', views.new_meeting, name='newmeeting'),
-    path('newmeeting/<int:reciever_id>/submit', views.confirm_meeting, name='confmeeting')
+    path('newmeeting/<int:reciever_id>/submit', views.confirm_meeting, name='confmeeting'),
+    path('chat/', views.rooms, name='rooms'),
+    path('chat/<str:room_name>', views.room, name='room'),
+    
 ]
