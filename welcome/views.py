@@ -166,12 +166,16 @@ def updateTimes(request):
     for day in request.user.day_set.all():
         for time in day.time_set.all():
             if day.day+time.time in ids:
-                time.available = True
-                time.save()
+                if time.available is not True:
+                    time.available = True
+                    time.save()
             else:
-                time.available = False
-                time.save()
-
-        
-
+                if time.available is not False:
+                    time.available = False
+                    time.save()
     return HttpResponseRedirect(reverse('index'))
+
+def view_myprofile(request):
+    user = request.user
+    return render(request, 'welcome/myprofile.html', {'student':user})
+

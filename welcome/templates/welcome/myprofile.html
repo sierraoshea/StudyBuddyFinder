@@ -1,0 +1,76 @@
+{% load socialaccount %}
+{% load bootstrap5 %}
+{% load static %}
+{% load custom_tags %}
+
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{% include 'welcome/base.html' %}
+<body style=" background-color:#159ec8c2;">
+    
+    <div class="d-flex justify-content-center" >
+        <div class="bg-light d-flex justify-content-center" style="height: 750px; width: 850;">
+            <div class="bg-light" style="height: 450px; width: 700;">
+                <div class="border-bottom border-dark"><h1>{{ student.first_name }} {{student.last_name }}</h1></div>
+                <br>
+                
+                <div class="text-center" >
+                    <h3>Bio:</h3>
+                    <textarea class="form-control" id="txtarea" rows="4"></textarea>
+                </div>
+                <br><br>
+                <div style=" background-color:#f7f3f3;">
+                    <h3 class="text-center">Availablility:</h3>
+                    <div class="container text-center">
+                        <div class="row gx-0 gy-0">
+                            <div class="col-md-2" style="height: 345px; width: 75">
+                                <div class="text-end" style="height: 20px; width: 0"></div>
+                                <div class="text-end" style="height: 24px; width: 0">10:00AM</div>
+                                <div class="text-end" style="height: 24px; width: 0">10:00AM</div>
+                                <div class="text-end" style="height: 24px; width: 0">12:00PM</div>
+                                <div class="pull-end" style="height: 24px; width: 0">1:00PM</div>
+                                <div class="pull-right" style="height: 24px; width: 0">2:00PM</div>
+                                <div class="text-center" style="height: 24px; width: 0">3:00PM</div>
+                                <div class="text-end" style="height: 24px; width: 0">4:00PM</div>
+                                <div class="text-end" style="height: 24px; width: 0">5:00PM</div>
+                                <div class="text-end" style="height: 24px; width: 0">6:00PM</div>
+                                <div class="text-end" style="height: 24px; width: 0">7:00PM</div>
+                                <div class="text-end" style="height: 24px; width: 0">8:00PM</div>
+                                <div class="text-end" style="height: 24px; width: 0">9:00PM</div>
+                                <div class="text-end" style="height: 24px; width: 0">10:00PM</div>
+                            </div>
+                            <div class = "col-lg">
+                                <div class ="row gx-0 gy-0">
+                                    <h5 class="col-sm">Mon.</h5>
+                                    <h5 class="col-sm">Tues.</h5>
+                                    <h5 class="col-sm">Wed.</h5>
+                                    <h5 class="col-sm">Thur.</h5>
+                                    <h5 class="col-sm">Fri.</h5>
+                                    <h5 class="col-sm">Sat.</h5>
+                                    <h5 class="col-sm">Sun.</h5>
+                                </div>
+                                <div class="row gx-0 gy-0">
+                                    {% for day in student.day_set.all %}
+                                        <div class="col-sm">
+                                            {% for time in day.time_set.all %}
+                                                {% if time.available %}
+                                                    <input type="checkbox" class="bg-light btn-check" name="available_times" id="{{ day.day }}{{ time.time }}" value="{{ day.day }}{{ time.time }}" autocomplete="off"  checked>
+                                                {% else %}
+                                                    <input type="checkbox" class="btn-check" name="available_times" id="{{ day.day }}{{ time.time }}" value="{{ day.day }}{{ time.time }}" autocomplete="off" >
+                                                {% endif %}
+                                                <label class="btn btn-outline-primary rounded-0" for="{{ day.day }}{{ time.time }}"><div style="height: 10px; width: 50"></div></label><br>
+                                            {% endfor %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div><br>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+
