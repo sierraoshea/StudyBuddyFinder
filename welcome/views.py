@@ -8,10 +8,11 @@ from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
 from .forms import EditProfileForm
-from .models import UserClasses, Class, UserToUserChat, Time, Day 
+from .models import UserClasses, Class, UserToUserChat, Time, Day, meeting
 import ast
 import requests
 from itertools import groupby
+from django.core.exceptions import ValidationError
 
 
 def index(request):
@@ -178,4 +179,26 @@ def updateTimes(request):
 def view_myprofile(request):
     user = request.user
     return render(request, 'welcome/myprofile.html', {'student':user})
+
+
+
+def new_meeting(request, reciever_id):
+    reciever = User.objects.get(pk=reciever_id)
+    return render(request, "welcome/newmeeting.html", {'reciever' : reciever, 'errmsg':''})
+
+def confirm_meeting(request, reciever_id):
+    reciever = User.objects.get(pk=reciever_id)
+    title = request.POST.get('title')
+    date = request.POST.get('date')
+    time = request.POST.get('time')
+
+    
+    try:
+        newmeeting= meeting.objects.create(title=title, date=date, time=time)
+    except(ValidationError):
+        return render(request, "welcome/newmeeting.html", {'reciever' : reciever, 'errmsg':'Please fill out all fields.'})
+    newmeeting.participants.add(request.user, reciever)
+    newmeeting.save()
+
+    return HttpResponseRedirect(reverse('index'))
 
