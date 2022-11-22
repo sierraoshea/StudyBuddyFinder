@@ -17,7 +17,11 @@
                 
                 <div class="text-center" style=" background-color:#ececec;" >
                     <h3>Bio:</h3>
-                    Nothing here yet ¯\_(ツ)_/¯
+                    {% if user.bio %}
+                        <p>{{ user.bio.content }}</p>
+                    {% else %}
+                        <p>Nothing here yet ¯\_(ツ)_/¯</p>
+                    {% endif %}
                 </div>
                 <br><br>
                 <h3 class="text-center">Availablility:</h3>
@@ -26,7 +30,7 @@
                         <div class="col-md-2" style="height: 345px; width: 75">
                             <div class="text-end" style="height: 20px; width: 0"></div>
                             <div class="text-end" style="height: 24px; width: 0">10:00AM</div>
-                            <div class="text-end" style="height: 24px; width: 0">10:00AM</div>
+                            <div class="text-end" style="height: 24px; width: 0">11:00AM</div>
                             <div class="text-end" style="height: 24px; width: 0">12:00PM</div>
                             <div class="pull-end" style="height: 24px; width: 0">1:00PM</div>
                             <div class="pull-right" style="height: 24px; width: 0">2:00PM</div>

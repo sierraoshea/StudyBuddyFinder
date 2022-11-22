@@ -41,7 +41,7 @@ class Time(models.Model):
 class Bio(models.Model):
     content = models.TextField()
     student = models.OneToOneField(User, on_delete=models.CASCADE)
-    
+
 class meeting(models.Model):
     date = models.DateField()
     time = models.TimeField()

@@ -8,7 +8,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
 from .forms import EditProfileForm
-from .models import UserClasses, Class, UserToUserChat, Time, Day, meeting
+from .models import UserClasses, Class, UserToUserChat, Time, Day, meeting, Bio
 import ast
 import requests
 from itertools import groupby
@@ -162,7 +162,7 @@ def updateTimes(request):
     try:
         ids = request.POST.getlist('available_times')
     except(KeyError):
-        return HttpResponseRedirect(reverse('index'))
+        return HttpResponseRedirect(reverse('myprofile'))
 
     for day in request.user.day_set.all():
         for time in day.time_set.all():
@@ -174,13 +174,20 @@ def updateTimes(request):
                 if time.available is not False:
                     time.available = False
                     time.save()
-    return HttpResponseRedirect(reverse('index'))
+    return HttpResponseRedirect(reverse('myprofile'))
 
 def view_myprofile(request):
+    thisbio, _ =Bio.objects.get_or_create(student=request.user)
     user = request.user
-    return render(request, 'welcome/myprofile.html', {'student':user})
+    return render(request, 'welcome/myprofile.html', {'student':user, 'contents':thisbio.content})
 
-
+def save_bio(request):
+    newcontent = request.POST.get('bio')
+    if newcontent is None:
+        newcontent = ""
+    request.user.bio.content = newcontent 
+    request.user.bio.save()
+    return HttpResponseRedirect(reverse('myprofile'))
 
 def new_meeting(request, reciever_id):
     reciever = User.objects.get(pk=reciever_id)

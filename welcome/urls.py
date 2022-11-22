@@ -21,7 +21,8 @@ urlpatterns = [
     path('newmeeting/<int:reciever_id>/submit', views.confirm_meeting, name='confmeeting'),
     path('chat/', views.rooms, name='rooms'),
     path('chat/<str:room_name>', views.room, name='room'),
-    path('updatetimes', views.updateTimes, name='updatetimes'),
-    path('myprofile', views.view_myprofile, name='myprofile')
+    path('myprofile/updatetimes', views.updateTimes, name='updatetimes'),
+    path('myprofile', views.view_myprofile, name='myprofile'),
+    path('myprofile/savebio', views.save_bio, name='savebio')
 
 ]
