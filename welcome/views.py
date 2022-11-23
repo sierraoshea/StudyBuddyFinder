@@ -10,7 +10,7 @@ from django.contrib.auth.forms import UserChangeForm
 
 from django.shortcuts import redirect
 from .forms import EditProfileForm
-from .models import UserClasses, Class, UserToUserChat, Time, Day, meeting, Bio
+from .models import UserClasses, Class, UserToUserChat, Time, Day, meeting, Bio, Message
 import json
 import ast
 import requests
@@ -19,6 +19,9 @@ from django.core.exceptions import ValidationError
 from .models import Friend_Request
 from .models import Class
 from .models import FriendList
+
+import string
+import random
 
 
 
@@ -157,12 +160,12 @@ def send_friend_request(request, userID):
     from_user = request.user
     to_user = User.objects.get(id=userID)
     current_list = FriendList.objects.select_related().filter(user=request.user.id)
-    friend_list = current_list.first().friends
     friend_request, created = Friend_Request.objects.get_or_create(from_user=from_user, to_user=to_user)
     if created:
-        return HttpResponseRedirect(reverse('index'), {'friend_list': friend_list})
+        return HttpResponseRedirect(reverse('index'))
     else:
-        return HttpResponseRedirect(reverse('index'), {'friend_list': friend_list})
+        friend_request.save()
+        return HttpResponseRedirect(reverse('index'))
 
 
 def accept_friend_request(request, requestID):
@@ -179,27 +182,33 @@ def accept_friend_request(request, requestID):
         # friend_list.from_user
         if request.method == "POST":
             friend_request.delete()
-        return HttpResponseRedirect(reverse('friends'), {'friend_list': friend_list.friends})
+        return HttpResponseRedirect(reverse('friends'))
     for i in current_list:
         i.friends.add(friend_request.from_user)
         add_friend_back(friend_request.from_user, friend_request.to_user)
         if request.method == "POST":
             friend_request.delete()
-            return HttpResponseRedirect(reverse('friends'), {'friend_list': i.friends})
+            return HttpResponseRedirect(reverse('friends'))
 
 
 def add_friend_back(to_user, from_user):
+
+    room_name = ''.join(random.choices(string.ascii_lowercase + string.digits, k=9))
+    private_chat = UserToUserChat(user1=to_user, user2=from_user, roomName=room_name)
+    private_chat.save()
+
     current_list = FriendList.objects.select_related().filter(user=to_user)
+    print("4")
     if not current_list.exists():
         friend_list = FriendList()
         friend_list.user = to_user
         friend_list.save()
         friend_list.friends.add(from_user)
         friend_list.save()
-        return HttpResponseRedirect(reverse('friends'), {'friend_list': friend_list.friends})
+        return HttpResponseRedirect(reverse('friends'))
     for i in current_list:
         i.friends.add(from_user)
-        return HttpResponseRedirect(reverse('friends'), {'friend_list': i.friends})
+        return HttpResponseRedirect(reverse('friends'))
 
 
 def decline_friend_request(request, requestID):
