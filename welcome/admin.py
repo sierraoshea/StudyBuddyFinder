@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserClasses, UserToUserChat
+from .models import UserClasses, UserToUserChat, Message
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 from .models import Class
@@ -19,3 +19,4 @@ admin.site.register(Class)
 admin.site.register(FriendList)
 admin.site.register(Friend_Request)
 admin.site.register(UserToUserChat)
+admin.site.register(Message)

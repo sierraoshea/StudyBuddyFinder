@@ -1,6 +1,8 @@
 import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
+from .models import UserToUserChat, Message
+from channels.db import database_sync_to_async
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -23,6 +25,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if not self.user.is_authenticated:
             return
         
+        room = await database_sync_to_async(UserToUserChat.objects.get)(roomName=self.room_name)
+
+        m = Message(
+            content = message,
+            user = self.user, 
+            room=room
+        )
+
+        await database_sync_to_async(m.save)()
+
         await self.channel_layer.group_send(
         self.room_group_name, {'type': 'chat_message', 'user': self.user.username, 'message': message}
         )
