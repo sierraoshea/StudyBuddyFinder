@@ -1,0 +1,90 @@
+{% load socialaccount %}
+{% load bootstrap5 %}
+{% load static %}
+{% load custom_tags %}
+
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{% include 'welcome/base.html' %}
+
+<br>
+<h1 class="text-center">New Meeting:</h1><br>
+<br>
+<div class="container">
+    <div class="row">
+        <div class ="col-md-5 bg-light">
+            <form action="{% url 'confmeeting' reciever.id %}" method = "post">
+                {% csrf_token %}
+                <br>
+                <br><br>
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="title" name="title">
+                </div>
+                <div class="mb-3">
+                    <label for="date" class="form-label">Date</label>
+                    <input type="date" class="form-control" id="date" name="date">
+                </div>
+                <div class="mb-3">
+                    <label for="time" class="form-label">Time</label>
+                    <input type="time" class="form-control" id="time" name="time">
+                </div>
+                <br>
+                <p class="text-center">{{ errmsg }}</p>
+                <div><div class="text-center"><button type="submit" value="submit" class="btn btn-primary">Confirm</button></div></div>
+            </form>
+
+        </div>
+    
+        <div class="bg-light col-md-5" style="height: 450px; width: 750">
+            <br>
+            <h3 class="text-center">{{ reciever.first_name }}'s Availablility:</h3>
+            <div class="container">
+                <div class="row gx-0 gy-0">
+                    <div class="col-md-2" style="height: 345px; width: 75">
+                        <div class="text-end" style="height: 20px; width: 0"></div>
+                        <div class="text-end" style="height: 24px; width: 0">10:00AM</div>
+                        <div class="text-end" style="height: 24px; width: 0">11:00AM</div>
+                        <div class="text-end" style="height: 24px; width: 0">12:00PM</div>
+                        <div class="pull-end" style="height: 24px; width: 0">1:00PM</div>
+                        <div class="pull-right" style="height: 24px; width: 0">2:00PM</div>
+                        <div class="text-center" style="height: 24px; width: 0"><p class="text-center">3:00PM</p></div>
+                        <div class="text-end" style="height: 24px; width: 0">4:00PM</div>
+                        <div class="text-end" style="height: 24px; width: 0">5:00PM</div>
+                        <div class="text-end" style="height: 24px; width: 0">6:00PM</div>
+                        <div class="text-end" style="height: 24px; width: 0">7:00PM</div>
+                        <div class="text-end" style="height: 24px; width: 0">8:00PM</div>
+                        <div class="text-end" style="height: 24px; width: 0">9:00PM</div>
+                        <div class="text-end" style="height: 24px; width: 0">10:00PM</div>
+                    </div>
+                    <div class = "col-lg">
+                        <div class ="row gx-0 gy-0">
+                            <h5 class="col-sm">Mon</h5>
+                            <h5 class="col-sm">Tues</h5>
+                            <h5 class="col-sm">Wed</h5>
+                            <h5 class="col-sm">Thur</h5>
+                            <h5 class="col-sm">Fri</h5>
+                            <h5 class="col-sm">Sat</h5>
+                            <h5 class="col-sm">Sun</h5>
+                        </div>
+                        <div class="row gx-0 gy-0">
+                            {% for day in reciever.day_set.all %}
+                                <div class="col-sm">
+                                    {% for time in day.time_set.all %}
+                                        {% if time.available %}
+                                            <div class="bg-primary border-primary" style="height: 24px; width: 75"></div>
+                                        {% else %}
+                                            <div class="border border-primary" style="height: 24px; width: 75"></div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

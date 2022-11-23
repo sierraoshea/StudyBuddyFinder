@@ -54,3 +54,16 @@ class Time(models.Model):
     available = models.BooleanField(default =False)
     day = models.ForeignKey(Day, on_delete=models.CASCADE)
     time = models.CharField(max_length = 10)
+
+class Bio(models.Model):
+    content = models.TextField()
+    student = models.OneToOneField(User, on_delete=models.CASCADE)
+
+class meeting(models.Model):
+    date = models.DateField()
+    time = models.TimeField()
+    title = models.CharField(max_length=150)
+    participants = models.ManyToManyField(User, related_name='meetings')
+
+    
+        

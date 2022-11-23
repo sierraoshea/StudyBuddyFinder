@@ -13,3 +13,9 @@ class EditProfileForm(UserChangeForm):
         model = User
         fields = ('first_name', 'last_name', 'email', 'username')
 
+class MeetingForm(forms.Form):
+    title = forms.CharField(max_length=100)
+    date = forms.DateField()
+    time = forms.TimeField()
+     
+

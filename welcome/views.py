@@ -1,8 +1,8 @@
 from django.views import generic
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseBadRequest
-from django.shortcuts import render
 from django.urls import reverse
 from django.urls import reverse_lazy
 from django.contrib.auth.models import User
@@ -10,10 +10,11 @@ from django.contrib.auth.forms import UserChangeForm
 
 from django.shortcuts import redirect
 from .forms import EditProfileForm
-from .models import UserClasses, Class, UserToUserChat, Time, Day 
+from .models import UserClasses, Class, UserToUserChat, Time, Day, meeting, Bio
 import ast
 import requests
 from itertools import groupby
+from django.core.exceptions import ValidationError
 from .models import Friend_Request
 from .models import Class
 from .models import FriendList
@@ -108,6 +109,10 @@ def search_classes(request):
         if searchPhrase in thisClass["description"]:
             foundClasses.append(thisClass)
     return render(request, 'welcome/home.html', {'response': foundClasses})
+
+def view_other_user(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    return render(request, 'welcome/other_profile.html', {'user' : user} )
 
 
 def update(request):
@@ -264,16 +269,50 @@ def updateTimes(request):
     try:
         ids = request.POST.getlist('available_times')
     except(KeyError):
-        return HttpResponseRedirect(reverse('index'))
+        return HttpResponseRedirect(reverse('myprofile'))
 
     for day in request.user.day_set.all():
         for time in day.time_set.all():
             if day.day+time.time in ids:
-                time.available = True
-                time.save()
+                if time.available is not True:
+                    time.available = True
+                    time.save()
             else:
-                time.available = False
-                time.save()
+                if time.available is not False:
+                    time.available = False
+                    time.save()
+    return HttpResponseRedirect(reverse('myprofile'))
+
+def view_myprofile(request):
+    thisbio, _ =Bio.objects.get_or_create(student=request.user)
+    user = request.user
+    return render(request, 'welcome/myprofile.html', {'student':user, 'contents':thisbio.content})
+
+def save_bio(request):
+    newcontent = request.POST.get('bio')
+    if newcontent is None:
+        newcontent = ""
+    request.user.bio.content = newcontent 
+    request.user.bio.save()
+    return HttpResponseRedirect(reverse('myprofile'))
+
+def new_meeting(request, reciever_id):
+    reciever = User.objects.get(pk=reciever_id)
+    return render(request, "welcome/newmeeting.html", {'reciever' : reciever, 'errmsg':''})
+
+def confirm_meeting(request, reciever_id):
+    reciever = User.objects.get(pk=reciever_id)
+    title = request.POST.get('title')
+    date = request.POST.get('date')
+    time = request.POST.get('time')
+
+    
+    try:
+        newmeeting= meeting.objects.create(title=title, date=date, time=time)
+    except(ValidationError):
+        return render(request, "welcome/newmeeting.html", {'reciever' : reciever, 'errmsg':'Please fill out all fields.'})
+    newmeeting.participants.add(request.user, reciever)
+    newmeeting.save()
 
     return HttpResponseRedirect(reverse('index'))
 
