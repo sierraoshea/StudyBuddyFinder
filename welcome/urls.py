@@ -13,10 +13,16 @@ urlpatterns = [
     path('profile/edit_classes/delete', views.delete_class, name='delete'),
     path('profile/edit_classes/add', views.add_classes, name='add'),
     path('profile/edit_classes/<str:subject>/', views.subject_view, name='class_view'),
+    path('viewuser/<int:user_id>/', views.view_other_user, name='viewuser'),
     path('classes/search', views.search_classes, name ='search'),
     path('update', views.update, name='update'),
+    path('updatetimes', views.updateTimes, name='updatetimes'),
+    path('newmeeting/<int:reciever_id>', views.new_meeting, name='newmeeting'),
+    path('newmeeting/<int:reciever_id>/submit', views.confirm_meeting, name='confmeeting'),
     path('chat/', views.rooms, name='rooms'),
     path('chat/<str:room_name>', views.room, name='room'),
-    path('updatetimes', views.updateTimes, name='updatetimes')
+    path('myprofile/updatetimes', views.updateTimes, name='updatetimes'),
+    path('myprofile', views.view_myprofile, name='myprofile'),
+    path('myprofile/savebio', views.save_bio, name='savebio')
 
 ]
