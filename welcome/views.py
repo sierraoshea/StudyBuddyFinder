@@ -27,18 +27,23 @@ import random
 
 def index(request):
     if request.user.is_authenticated:
+        meetings = meeting.objects.filter(participants=request.user).order_by('date')
         if not request.user.day_set.all():
             days = ['M','T','W','Th','F','Sa','Su']
             for day in days:
                 thisday = Day.objects.create(user= request.user, day = day)
                 for j in range(10, 23):
                     Time.objects.create(day = thisday, time = str(j)+":00")
+    
+        return render(request, 'welcome/index.html', {'meetings': meetings})
 
         #current_list = FriendList.objects.select_related().filter(user=request.user.id)
         #if current_list.exists():
             #friend_list = current_list.first().friends
     #return render(request, 'welcome/index.html', {'friends': friend_list})
     return render(request, 'welcome/index.html')
+
+    
 
 class EditView(generic.UpdateView):
     form_class = EditProfileForm
@@ -256,25 +261,22 @@ def friends(request):
         friend_request = []
     return render(request, 'welcome/friends.html', {'friends': friend_request, 'friend_list': friend_list})
 
-
-def rooms(request):
+def room(request, room_name):
     
     rooms = UserToUserChat.objects.filter(user1=request.user) | UserToUserChat.objects.filter(user2=request.user)
 
-    return render(request, 'welcome/rooms.html', {'rooms': rooms})
-
-
-def room(request, room_name):
+    if room_name=='default':
+        return render(request, 'welcome/room2.html', {'room_name': room_name, 'rooms': rooms})
 
     if not UserToUserChat.objects.filter(roomName=room_name):
-        return HttpResponseRedirect(reverse('index')) #doesn't exist
+        return HttpResponseRedirect(reverse('room', kwargs={'room_name': 'default'})) #doesn't exist
     
     room = UserToUserChat.objects.get(roomName=room_name)
     messages = Message.objects.filter(room=room).order_by('-date_added')[:20:-1]
     if(request.user != room.user1 and request.user != room.user2):
-        return HttpResponseRedirect(reverse('index')) #not allowed
+        return HttpResponseRedirect(reverse('room', kwargs={'room_name': 'default'})) #not allowed
     
-    return render(request, 'welcome/room2.html', {'room_name': room_name, 'messages': messages})
+    return render(request, 'welcome/room2.html', {'room_name': room_name, 'messages': messages, 'rooms': rooms})
   
 def updateTimes(request):
     try:
