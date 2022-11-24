@@ -2,11 +2,36 @@
 
 <body>
     <div class="container-fluid d-flex h-100">
-        <div class="col-md-3 h-75">
-
+        <div class="col-md-3 h-75 border-2 border-start-0 border-end" style="border-image: linear-gradient(0deg, white, dimgray, white) 1;">
+            <div class="container p-2">
+                
+                <div class="list-group text-center overflow-auto">
+                    {% if rooms %}
+                    {% for room in rooms %}
+                    
+                    {% if room.user1 == user %}
+                    {% if room.roomName == room_name%}
+                    <a href="{% url 'room' room.roomName %}" class="list-group-item list-group-item-action active">Chat with {{room.user2.first_name}} {{room.user2.last_name}}</a>
+                    {% else %}
+                    <a href="{% url 'room' room.roomName %}" class="list-group-item list-group-item-action">Chat with {{room.user2.first_name}} {{room.user2.last_name}}</a>
+                    {%endif%}
+                    {% else %}
+                    {% if room.roomName == room_name%}
+                    <a href="{% url 'room' room.roomName %}" class="list-group-item list-group-item-action active">Chat with {{room.user2.first_name}} {{room.user2.last_name}}</a>
+                    {% else %}
+                    <a href="{% url 'room' room.roomName %}" class="list-group-item list-group-item-action">Chat with {{room.user2.first_name}} {{room.user2.last_name}}</a>
+                    {%endif%}
+                    {%endif%}
+                    
+                    {%endfor%}
+                    {% else %}
+                    <a href="{%url 'friends'%}" class="list-group-item-action">No chats available. Add friends to chat!</a>
+                    {%endif%}
+                </div>
+            </div>
         </div>
         <div class="col-md-9">
-            <div class="flex-row h-75 overflow-auto" id="chat-log">
+            <div class="flex-row h-75 overflow-auto p-2" id="chat-log">
                 {% for message in messages%}
                 {% if message.user.id == request.user.id %}
                 <div class="d-flex align-items-end flex-column">
@@ -25,8 +50,13 @@
                 
             </div>
             <div class="text-center">
+                {% if room_name == 'default'%}
+                <input id="chat-message-input" type="text" size="100" disabled>
+                <input id="chat-message-submit" type="button" value="Send" disabled>
+                {%else%}
                 <input id="chat-message-input" type="text" size="100">
                 <input id="chat-message-submit" type="button" value="Send">
+                {%endif%}
             </div>
         </div>
     </div>
