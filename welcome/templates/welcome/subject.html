@@ -8,19 +8,21 @@
 {% include 'welcome/base.html' %}
 
 <style>
-table tbody:nth-child(odd) {
-    background-color: #E8E8E8;
-}
+    table tbody:nth-child(odd) {
+        background-color: #E8E8E8;
+    }
 </style>
 
 <h1 class="text-center">Select Your Current Courses</h1>
 <div class="text-center">
-<a href="{% url 'classes' %}">Return to Subject View</a>
+    <a href="{% url 'classes' %}">Return to Subject View</a>
 </div>
+
+<input class="form-control" type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for classes">
 
 <form action="{% url 'add' %}" method="post">
     {% csrf_token %}
-    <table class="table table-condensed table-striped">
+    <table class="table table-condensed table-striped" id="classTable">
         <thead>
             <tr>
                 <th></th>
@@ -30,7 +32,7 @@ table tbody:nth-child(odd) {
         
         <tbody>
             {% for class_number, class_list in classes.items %}
-            <tr>
+            <tr class="classRow">
                 <td>
                     <button type="button" data-toggle="collapse" class="accordion-toggle" data-target="#row{{ forloop.counter }}" id="{{class_number}}">+</button>
                 </td>
@@ -58,12 +60,12 @@ table tbody:nth-child(odd) {
                                     <td rowspan="{{section.meetings|length}}">{{section.component}}</td>
                                     <td rowspan="{{section.meetings|length}}">{{section.instructor.name}}</td>
                                     {% for comp in section.meetings%}
-                                        <td>{{comp.days}}</td>
-                                        <td>{{comp.facility_description}}</td>
-                                        {% if forloop.counter < section.meetings|length %}
-                                        <td></td>
-                                        </tr><tr>
-                                        {% endif %}
+                                    <td>{{comp.days}}</td>
+                                    <td>{{comp.facility_description}}</td>
+                                    {% if forloop.counter < section.meetings|length %}
+                                    <td></td>
+                                </tr><tr>
+                                    {% endif %}
                                     {%endfor%}
                                     <td>
                                         <input class="form-check-input" name="class_to_add" type="checkbox" 
@@ -72,27 +74,47 @@ table tbody:nth-child(odd) {
                                         id="{{section.subject}} {{section.catalog_number}} {{section.description}} {{section.course_section}}">
                                     </td>
                                 </tr>
-
+                                
                             </tbody>
                             {% endfor %}
                         </div>
-                        </table>
-                    </div>
-                </td>
-            </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
         {% endfor %}
-        </tbody>
-    </table>
-    <h6>Classes to add:</h6>
-    <div id="classesToAdd">
-        
-    </div>
+    </tbody>
+</table>
+<h6>Classes to add:</h6>
+<div id="classesToAdd">
     
-    <br>
-    <input type="submit" value="Add Class">
+</div>
+
+<br>
+<input class="btn btn-primary" type="submit" value="Add">
 </form>
 
 <script type="text/javascript">
+    function myFunction() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("classTable");
+        tr = document.getElementsByClassName("classRow");
+        
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[1];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            } 
+        }
+    }
+    
     function update(param) {
         
         if (document.getElementById(param).checked) {
