@@ -14,7 +14,7 @@
     <div class="container-fullwidth m-2">
         <div class="row" data-masonry='{"percentPosition": true}'>
             <div class="col-md-3">
-                <div class="col-md-12 bg-white rounded">
+                <div class="col-md-12 p-2 bg-white rounded">
                     <form action="{% url 'update' %}" method="post">
                         {% csrf_token %}
                         <h3 class="text-center m-2">Current Classes:</h3>
@@ -54,7 +54,7 @@
                 </div>
                 
                 <div class="col-md-6">
-                    <div class="col-md-12 bg-white rounded">
+                    <div class="col-md-12 p-2 bg-white rounded">
                         <h3 class="text-center m-2">Find Study Buddies</h3>
                         
                         {% if user.classes.all %}
@@ -101,7 +101,7 @@
                 <div class="col-md-3">
                     
                     <div class="col-md-12 bg-white rounded">
-                        <h3 class="text-center m-2">Upcoming Meetings</h3>
+                        <h3 class="text-center p-2 m-2">Upcoming Meetings</h3>
                         {% if meetings %}
                             {% for meeting in meetings %}
                                 <h5 class="p-1 m-0">{{meeting.title}}</h5>
