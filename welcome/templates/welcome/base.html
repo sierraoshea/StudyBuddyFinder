@@ -25,7 +25,7 @@
                     <a class="nav-link active text-light" href="{% url 'friends' %}">Friends</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active text-light" aria-current="page" href="{% url 'myprofile' %}">MyProfile</a>
+                    <a class="nav-link active text-light" aria-current="page" href="{% url 'myprofile' %}">About Me</a>
                 </li>
                 <li><a class="nav-link active text-light" aria-current="page" href="{% url 'room' room_name='default' %}">Chat</a></li>
             </ul>
@@ -41,7 +41,7 @@
 </nav>
 
 <script type="text/javascript">
-    document.getElementById("profile_button").onclick = function () {
+    document.getElementById("#profile_button").onclick = function () {
         location.href = "{% url 'profile' %}";
     };
 </script>
