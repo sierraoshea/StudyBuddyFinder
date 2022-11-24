@@ -6,6 +6,7 @@
             <div class="container p-2">
                 
                 <div class="list-group text-center overflow-auto">
+                    {% if rooms %}
                     {% for room in rooms %}
                     
                     {% if room.user1 == user %}
@@ -23,6 +24,9 @@
                     {%endif%}
                     
                     {%endfor%}
+                    {% else %}
+                    <a href="{%url 'friends'%}" class="list-group-item-action">No chats available. Add friends to chat!</a>
+                    {%endif%}
                 </div>
             </div>
         </div>
