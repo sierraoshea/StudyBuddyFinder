@@ -7,19 +7,19 @@
                 
                 <div class="list-group text-center overflow-auto">
                     {% if rooms %}
-                    {% for room in rooms %}
+                        {% for room in rooms %}
                     
-                    {% if room.user1 == user %}
-                    {% if room.roomName == room_name%}
-                    <a href="{% url 'room' room.roomName %}" class="list-group-item list-group-item-action active">Chat with {{room.user2.first_name}} {{room.user2.last_name}}</a>
+                            {% if room.user1 == user %}
+                                {% if room.roomName == room_name%}
+                                <a href="{% url 'room' room.roomName %}" class="list-group-item list-group-item-action active">Chat with {{room.user2.first_name}} {{room.user2.last_name}}</a>
+                                {% else %}
+                                <a href="{% url 'room' room.roomName %}" class="list-group-item list-group-item-action">Chat with {{room.user2.first_name}} {{room.user2.last_name}}</a>
+                                {%endif%}
+                            {% else %}
+                                {% if room.roomName == room_name%}
+                    <a href="{% url 'room' room.roomName %}" class="list-group-item list-group-item-action active">Chat with {{room.user1.first_name}} {{room.user1.last_name}}</a>
                     {% else %}
-                    <a href="{% url 'room' room.roomName %}" class="list-group-item list-group-item-action">Chat with {{room.user2.first_name}} {{room.user2.last_name}}</a>
-                    {%endif%}
-                    {% else %}
-                    {% if room.roomName == room_name%}
-                    <a href="{% url 'room' room.roomName %}" class="list-group-item list-group-item-action active">Chat with {{room.user2.first_name}} {{room.user2.last_name}}</a>
-                    {% else %}
-                    <a href="{% url 'room' room.roomName %}" class="list-group-item list-group-item-action">Chat with {{room.user2.first_name}} {{room.user2.last_name}}</a>
+                    <a href="{% url 'room' room.roomName %}" class="list-group-item list-group-item-action">Chat with {{room.user1.first_name}} {{room.user1.last_name}}</a>
                     {%endif%}
                     {%endif%}
                     
