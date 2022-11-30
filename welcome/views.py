@@ -203,7 +203,6 @@ def add_friend_back(to_user, from_user):
     private_chat.save()
 
     current_list = FriendList.objects.select_related().filter(user=to_user)
-    print("4")
     if not current_list.exists():
         friend_list = FriendList()
         friend_list.user = to_user
