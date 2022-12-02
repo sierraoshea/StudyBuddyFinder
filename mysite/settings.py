@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost','127.0.0.1','b-03-study-buddy-finder.herokuapp.com','*']
 
+SECURE_SSL_REDIRECT = True
 
 # Application definition
 
