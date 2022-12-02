@@ -34,13 +34,12 @@ def index(request):
                 thisday = Day.objects.create(user= request.user, day = day)
                 for j in range(10, 23):
                     Time.objects.create(day = thisday, time = str(j)+":00")
-    
+        current_list = FriendList.objects.select_related().filter(user=request.user.id)
+        if current_list.exists():
+            friend_list = current_list.first().friends
+            return render(request, 'welcome/index.html', {'friends_for_user': friend_list, 'meetings':meetings})
         return render(request, 'welcome/index.html', {'meetings': meetings})
 
-        #current_list = FriendList.objects.select_related().filter(user=request.user.id)
-        #if current_list.exists():
-            #friend_list = current_list.first().friends
-    #return render(request, 'welcome/index.html', {'friends': friend_list})
     return render(request, 'welcome/index.html')
 
     
@@ -118,6 +117,7 @@ def search_classes(request):
         if searchPhrase in thisClass["description"]:
             foundClasses.append(thisClass)
     return render(request, 'welcome/home.html', {'response': foundClasses})
+
 
 def view_other_user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
@@ -231,12 +231,16 @@ def remove_friend(request, userID):
         if to_user_friendlist.exists():
             for i in to_user_friendlist:
                 i.friends.remove(from_user)
-                return HttpResponseRedirect(reverse('friends'), {'friend_list': i.friends})
+                return HttpResponseRedirect(reverse('friends'), {'friend_list_this_user': i.friends})
         from_user_friendlist = FriendList.objects.select_related().filter(user=from_user)
         if from_user_friendlist.exists():
             for j in from_user_friendlist:
                 j.friends.remove(to_user)
-                return HttpResponseRedirect(reverse('friends'), {'friend_list': j.friends})
+                return HttpResponseRedirect(reverse('friends'), {'friend_list_from_user': j.friends})
+        room = UserToUserChat.objects.filter(user1=request.user) | UserToUserChat.objects.filter(user2=from_user)
+        if room.exists():
+            room.delete
+    return HttpResponseRedirect(reverse('friends'))
 
 
 def study_partners(request):
@@ -334,6 +338,9 @@ def page(request):
 
 # Things to ask about:
 # How to disable a button and make it say sent after friend request was sent
+    # Show the friends instead of a request
 # How to make sure you cannot send a friend request to someone twice
 # Add a logout feature
+# make sure you cannot add classes twice
 # Removing friends from a list
+

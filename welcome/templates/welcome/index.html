@@ -76,10 +76,15 @@
                                     <a href="{% url 'viewuser' student.id %}">
                                         <h5 class="float-start p-2" >{{ student.first_name }} {{ student.last_name }}</h5>
                                     </a>
-                                    
-                                    <div class="float-end p-2"><a href="{% url 'send friend request' student.id %}" class="btn btn-success">Send Friend Request</a></div>
-                                    <div class="float-end p-2"><a href="{% url 'newmeeting' student.id %}" class="btn btn-success">Schedule Meeting</a></div>
-                                    
+                                    <p>{{ friends }}</p>
+                                    {% if student not in friends_for_user.all %}
+                                        <div id="send_friend_request"class="float-end p-2"><a href="{% url 'send friend request' student.id %}" class="btn btn-success" value="enter">Send Friend Request</a></div>
+                                            {% if send_friend_request.clicked %}
+                                                <div class="float-end p-2 disabled"><a href="{% url 'send friend request' student.id %}" class="btn btn-success" value="enter">Pending</a></div>
+                                            {% endif %}
+                                    {% else %}
+                                        <div class="float-end p-2"><a href="{% url 'newmeeting' student.id %}" class="btn btn-success" disabled="true">Schedule Meeting</a></div>
+                                    {% endif %}
                                     
                                 </div>
                                 
