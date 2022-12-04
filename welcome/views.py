@@ -24,7 +24,6 @@ import string
 import random
 
 
-
 def index(request):
     if request.user.is_authenticated:
         meetings = meeting.objects.filter(participants=request.user).order_by('date')
@@ -37,11 +36,10 @@ def index(request):
         current_list = FriendList.objects.select_related().filter(user=request.user.id)
         if current_list.exists():
             friend_list = current_list.first().friends
-            return render(request, 'welcome/index.html', {'friends_for_user': friend_list, 'meetings':meetings})
+            return render(request, 'welcome/index.html', {'friends_for_user': friend_list, 'meetings': meetings})
         return render(request, 'welcome/index.html', {'meetings': meetings})
 
     return render(request, 'welcome/index.html')
-
     
 
 class EditView(generic.UpdateView):
@@ -340,7 +338,7 @@ def page(request):
 # How to disable a button and make it say sent after friend request was sent
     # Show the friends instead of a request
 # How to make sure you cannot send a friend request to someone twice
-# Add a logout feature
 # make sure you cannot add classes twice
-# Removing friends from a list
+# be able to sort users based on certain features
+# change the setup of the page when you are not logged in
 
