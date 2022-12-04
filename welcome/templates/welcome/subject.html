@@ -11,96 +11,123 @@
     table tbody:nth-child(odd) {
         background-color: #E8E8E8;
     }
+    
+    .class-container {
+        position: sticky;
+        top:0;
+        max-height: 25%;
+    }
 </style>
 
-<h1 class="text-center">Select Your Current Courses</h1>
-<div class="text-center">
-    <a href="{% url 'classes' %}">Return to Subject View</a>
-</div>
-
-<input class="form-control" type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for classes">
-
-<form action="{% url 'add' %}" method="post">
-    {% csrf_token %}
-    <table class="table table-condensed table-striped" id="classTable">
-        <thead>
-            <tr>
-                <th></th>
-                <th>Class</th>
-            </tr>
-        </thead>
-        
-        <tbody>
-            {% for class_number, class_list in classes.items %}
-            <tr class="classRow">
-                <td>
-                    <button type="button" data-toggle="collapse" class="accordion-toggle" data-target="#row{{ forloop.counter }}" id="{{class_number}}">+</button>
-                </td>
-                <td>{{class_number}}</td>
-            </tr>
-            
-            <tr>
-                <td colspan="12" class="hiddenRow p-0">
-                    <div class="accordian-body collapse" id="row{{ forloop.counter }}"> 
-                        <table class="table">
-                            <thead>
-                                <tr class="info">
-                                    <th>Section</th>
-                                    <th>Component</th>
-                                    <th>Professor</th>
-                                    <th>Days</th>	
-                                    <th>Location</th>
-                                    <th>Add?</th>
-                                </tr>
-                            </thead>
-                            {% for section in class_list %}
-                            <tbody>
-                                <tr>
-                                    <td rowspan="{{section.meetings|length}}">{{section.course_section}}</td>
-                                    <td rowspan="{{section.meetings|length}}">{{section.component}}</td>
-                                    <td rowspan="{{section.meetings|length}}">{{section.instructor.name}}</td>
-                                    {% for comp in section.meetings%}
-                                    <td>{{comp.days}}</td>
-                                    <td>{{comp.facility_description}}</td>
-                                    {% if forloop.counter < section.meetings|length %}
-                                    <td></td>
-                                </tr><tr>
-                                    {% endif %}
-                                    {%endfor%}
-                                    <td>
-                                        <input class="form-check-input" name="class_to_add" type="checkbox" 
-                                        value="{{ section.subject }}/{{ section.catalog_number }}/{{ section.component }}/{{section.course_section}}/{{section.instructor.name }}" 
-                                        onclick="update('{{section.subject}} {{section.catalog_number}} {{section.description}} {{section.course_section}}')"
-                                        id="{{section.subject}} {{section.catalog_number}} {{section.description}} {{section.course_section}}">
-                                    </td>
-                                </tr>
-                                
-                            </tbody>
-                            {% endfor %}
-                        </div>
-                    </table>
+<body>
+    <div class="container-fluid ps-0">
+        <div class="row">
+            <div class="col-md-9">
+                <h1 class="text-center p-2">Select Your Current Courses</h1>
+                <div class="text-center">
+                    <a class="p-1" href="{% url 'classes' %}">Return to Subject View</a>
                 </div>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<h6>Classes to add:</h6>
-<div id="classesToAdd">
-    
-</div>
-
-<br>
-<input class="btn btn-primary" type="submit" value="Add">
+                
+                <input class="form-control" type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for classes">
+                
+                
+                <form action="{% url 'add' %}" method="post">
+                    {% csrf_token %}
+                    <table class="table table-condensed table-striped" id="classTable">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Class</th>
+                            </tr>
+                        </thead>
+                        
+                        <tbody>
+                            {% for class_number, class_list in classes.items %}
+                            <tr class="classRow">
+                                <td>
+                                    <button type="button" data-toggle="collapse" class="accordion-toggle" data-target="#row{{ forloop.counter }}" id="{{class_number}}">+</button>
+                                </td>
+                                <td>{{class_number}}</td>
+                            </tr>
+                            
+                            <tr>
+                                <td colspan="12" class="hiddenRow p-0">
+                                    <div class="accordian-body collapse" id="row{{ forloop.counter }}"> 
+                                        <table class="table">
+                                            <thead>
+                                                <tr class="info">
+                                                    <th>Section</th>
+                                                    <th>Component</th>
+                                                    <th>Professor</th>
+                                                    <th>Days</th>	
+                                                    <th>Location</th>
+                                                    <th>Add?</th>
+                                                </tr>
+                                            </thead>
+                                            {% for section in class_list %}
+                                            <tbody>
+                                                <tr>
+                                                    <td rowspan="{{section.meetings|length}}">{{section.course_section}}</td>
+                                                    <td rowspan="{{section.meetings|length}}">{{section.component}}</td>
+                                                    <td rowspan="{{section.meetings|length}}">{{section.instructor.name}}</td>
+                                                    {% for comp in section.meetings%}
+                                                    <td>{{comp.days}}</td>
+                                                    <td>{{comp.facility_description}}</td>
+                                                    {% if forloop.counter < section.meetings|length %}
+                                                    <td></td>
+                                                </tr><tr>
+                                                    {% endif %}
+                                                    {%endfor%}
+                                                    <td>
+                                                        <input class="form-check-input" name="class_to_add" type="checkbox" 
+                                                        value="{{ section.subject }}/{{ section.catalog_number }}/{{ section.component }}/{{section.course_section}}/{{section.instructor.name }}" 
+                                                        onclick="update('{{section.subject}} {{section.catalog_number}} {{section.description}} {{section.course_section}}')"
+                                                        id="{{section.subject}} {{section.catalog_number}} {{section.description}} {{section.course_section}}">
+                                                    </td>
+                                                </tr>
+                                                
+                                            </tbody>
+                                            {% endfor %}
+                                        </div>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-3">
+                <div class="class-container">
+                    <h5 class="text-center p-2">Classes to add:</h5>
+                    <ul id="classesToAdd" class="p-2">
+                    </ul>
+                    
+                    <div class="text-center">
+                        <input class="btn btn-primary" type="submit" value="Add">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
-
+</body>
 <script type="text/javascript">
     function myFunction() {
-        var input, filter, table, tr, td, i, txtValue;
+        var input, filter, table, tr, td, i, txtValue, expanded;
+
+        expanded = document.getElementsByClassName("accordian-body collapse show");
+
+        for (i = 0; i < expanded.length; expanded++) {
+            expanded[i].className = "accordian-body collapse";
+        }
+
         input = document.getElementById("myInput");
         filter = input.value.toUpperCase();
         table = document.getElementById("classTable");
         tr = document.getElementsByClassName("classRow");
+        
         
         for (i = 0; i < tr.length; i++) {
             td = tr[i].getElementsByTagName("td")[1];
@@ -116,12 +143,12 @@
     }
     
     function update(param) {
-        
+
         if (document.getElementById(param).checked) {
-            var para = document.createElement("p");
-            var node = document.createTextNode(param);
-            para.appendChild(node);
-            para.setAttribute('id', param + "p")
+            var para = document.createElement("li");
+            para.textContent = param;
+            para.setAttribute('id', param + "p");
+            para.setAttribute('class', "list-group-item list-group-item-dark");
             
             const element = document.getElementById("classesToAdd");
             element.appendChild(para);

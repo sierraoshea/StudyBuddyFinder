@@ -73,7 +73,7 @@ def delete_class(request):
     else:
         for id in class_ids:
             try:
-                thisclass = Class.objects.get(id.subject +str(id.catalog_number))
+                thisclass = Class.objects.get(Name=id.subject + str(id.catalog_number))
                 thisclass.students.remove(request.user)
             except:
                 pass
@@ -341,4 +341,7 @@ def page(request):
 # make sure you cannot add classes twice
 # be able to sort users based on certain features
 # change the setup of the page when you are not logged in
+# if you change friends on backend it does not update main friends
+# make sure you are showing the correct friend list once you remove people
+# adding user back as a friend not working also now
 
