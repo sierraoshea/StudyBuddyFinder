@@ -24,7 +24,6 @@ import string
 import random
 
 
-
 def index(request):
     if request.user.is_authenticated:
         meetings = meeting.objects.filter(participants=request.user).order_by('date')
@@ -34,16 +33,14 @@ def index(request):
                 thisday = Day.objects.create(user= request.user, day = day)
                 for j in range(10, 23):
                     Time.objects.create(day = thisday, time = str(j)+":00")
-    
+        current_list = FriendList.objects.select_related().filter(user=request.user.id)
+        if current_list.exists():
+            friend_list = current_list.first().friends
+            return render(request, 'welcome/index.html', {'friends_for_user': friend_list, 'meetings': meetings})
         return render(request, 'welcome/index.html', {'meetings': meetings})
 
-        #current_list = FriendList.objects.select_related().filter(user=request.user.id)
-        #if current_list.exists():
-            #friend_list = current_list.first().friends
-    #return render(request, 'welcome/index.html', {'friends': friend_list})
     return render(request, 'welcome/index.html')
 
-    
 
 class EditView(generic.UpdateView):
     form_class = EditProfileForm
@@ -119,6 +116,7 @@ def search_classes(request):
             foundClasses.append(thisClass)
     return render(request, 'welcome/home.html', {'response': foundClasses})
 
+
 def view_other_user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     return render(request, 'welcome/other_profile.html', {'user' : user} )
@@ -166,11 +164,19 @@ def send_friend_request(request, userID):
     to_user = User.objects.get(id=userID)
     current_list = FriendList.objects.select_related().filter(user=request.user.id)
     friend_request, created = Friend_Request.objects.get_or_create(from_user=from_user, to_user=to_user)
+    friend_requests = Friend_Request.objects.filter(from_user=from_user, to_user=to_user)
     if created:
-        return HttpResponseRedirect(reverse('index'))
+        if friend_requests.exists():
+            return render(request, 'welcome/index.html', {'friend_requests_all': friend_requests})
+        else:
+            return HttpResponseRedirect(reverse('index'))
     else:
         friend_request.save()
-        return HttpResponseRedirect(reverse('index'))
+        if friend_requests.exists():
+            return render(request, 'welcome/index.html', {'friend_requests_all': friend_requests})
+        else:
+            return HttpResponseRedirect(reverse('index'))
+
 
 
 def accept_friend_request(request, requestID):
@@ -231,12 +237,16 @@ def remove_friend(request, userID):
         if to_user_friendlist.exists():
             for i in to_user_friendlist:
                 i.friends.remove(from_user)
-                return HttpResponseRedirect(reverse('friends'), {'friend_list': i.friends})
+                return HttpResponseRedirect(reverse('friends'), {'friend_list_this_user': i.friends})
         from_user_friendlist = FriendList.objects.select_related().filter(user=from_user)
         if from_user_friendlist.exists():
             for j in from_user_friendlist:
                 j.friends.remove(to_user)
-                return HttpResponseRedirect(reverse('friends'), {'friend_list': j.friends})
+                return HttpResponseRedirect(reverse('friends'), {'friend_list_from_user': j.friends})
+        room = UserToUserChat.objects.filter(user1=request.user) | UserToUserChat.objects.filter(user2=from_user)
+        if room.exists():
+            room.delete
+    return HttpResponseRedirect(reverse('friends'))
 
 
 def study_partners(request):
@@ -334,6 +344,12 @@ def page(request):
 
 # Things to ask about:
 # How to disable a button and make it say sent after friend request was sent
+    # Show the friends instead of a request
 # How to make sure you cannot send a friend request to someone twice
-# Add a logout feature
-# Removing friends from a list
+# make sure you cannot add classes twice
+# be able to sort users based on certain features
+# change the setup of the page when you are not logged in
+# if you change friends on backend it does not update main friends
+# make sure you are showing the correct friend list once you remove people
+# adding user back as a friend not working also now
+

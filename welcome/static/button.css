@@ -1,0 +1,4 @@
+if(document.getElementById('send_friend_request').clicked == true)
+{
+    clicked = True
+}
