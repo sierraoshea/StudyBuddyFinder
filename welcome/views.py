@@ -178,7 +178,6 @@ def send_friend_request(request, userID):
             return HttpResponseRedirect(reverse('index'))
 
 
-
 def accept_friend_request(request, requestID):
     friend_request = Friend_Request.objects.get(id=requestID)
     current_list = FriendList.objects.select_related().filter(user=request.user.id)
@@ -237,12 +236,14 @@ def remove_friend(request, userID):
         if to_user_friendlist.exists():
             for i in to_user_friendlist:
                 i.friends.remove(from_user)
-                return HttpResponseRedirect(reverse('friends'), {'friend_list_this_user': i.friends})
+                i.friends.save()
+                return HttpResponseRedirect(request, 'welcome/friends.html', {'friend_list_to_user': i.friends})
         from_user_friendlist = FriendList.objects.select_related().filter(user=from_user)
         if from_user_friendlist.exists():
             for j in from_user_friendlist:
                 j.friends.remove(to_user)
-                return HttpResponseRedirect(reverse('friends'), {'friend_list_from_user': j.friends})
+                j.friends.save()
+                return HttpResponseRedirect(request, 'welcome/friends.html', {'friend_list_this_user': j.friends})
         room = UserToUserChat.objects.filter(user1=request.user) | UserToUserChat.objects.filter(user2=from_user)
         if room.exists():
             room.delete
@@ -269,6 +270,7 @@ def friends(request):
     except(AttributeError):
         friend_request = []
     return render(request, 'welcome/friends.html', {'friends': friend_request, 'friend_list': friend_list})
+
 
 def room(request, room_name):
     
@@ -343,13 +345,10 @@ def page(request):
 
 
 # Things to ask about:
-# How to disable a button and make it say sent after friend request was sent
-    # Show the friends instead of a request
-# How to make sure you cannot send a friend request to someone twice
 # make sure you cannot add classes twice
 # be able to sort users based on certain features
 # change the setup of the page when you are not logged in
 # if you change friends on backend it does not update main friends
 # make sure you are showing the correct friend list once you remove people
-# adding user back as a friend not working also now
+# fix remove friend so it actually removes them
 

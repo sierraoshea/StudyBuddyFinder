@@ -76,14 +76,23 @@
                                     <a href="{% url 'viewuser' student.id %}">
                                         <h5 class="float-start p-2" >{{ student.first_name }} {{ student.last_name }}</h5>
                                     </a>
-                                    {% if student not in user.user.friends.all %}
-                                        {% if friend_requests_all %}
-                                            <div class="float-end p-2"><button type="button" class="btn btn-secondary btn-lg" disabled>Pending</button></div>
-                                        {% else %}
-                                            <div id="send_friend_request"class="float-end p-2"><a href="{% url 'send friend request' student.id %}" class="btn btn-success" value="enter">Send Friend Request</a></div>
+                                    {% if friends_for_user.all %}
+                                        {% if student not in friends_for_user.all %}
+                                            {% if friend_requests_all %}
+                                                <div class="float-end p-2"><button type="button" class="btn btn-secondary btn-lg" disabled>Pending</button></div>
+                                            {% else %}
+                                                <div id="send_friend_request"class="float-end p-2"><a href="{% url 'send friend request' student.id %}" class="btn btn-success" value="enter">Send Friend Request</a></div>
+                                            {% endif %}
+                                        {% endif %}
+                                        {% if student in friends_for_user.all %}
+                                            <div class="float-end p-2"><a href="{% url 'newmeeting' student.id %}" class="btn btn-success">Schedule Meeting</a></div>
                                         {% endif %}
                                     {% else %}
-                                        <div class="float-end p-2"><a href="{% url 'newmeeting' student.id %}" class="btn btn-success">Schedule Meeting</a></div>
+                                        {% if friend_requests_all %}
+                                                <div class="float-end p-2"><button type="button" class="btn btn-secondary btn-lg" disabled>Pending</button></div>
+                                        {% else %}
+                                                <div id="send_friend_request1"class="float-end p-2"><a href="{% url 'send friend request' student.id %}" class="btn btn-success" value="enter">Send Friend Request</a></div>
+                                        {% endif %}
                                     {% endif %}
                                 </div>
                                 <br>
