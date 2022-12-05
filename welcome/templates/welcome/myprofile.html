@@ -18,7 +18,7 @@
                     {% csrf_token %}
                     <h4>My Bio:</h4>
                     <div class="text-center" >
-                        <textarea class="form-control" id="txtarea" name="bio" rows="4">{{ contents }}</textarea>
+                        <textarea class="form-control" id="txtarea" name="bio" rows="4" style="resize: none;">{{ contents }}</textarea>
                         
                     </div>
                     <button class="btn btn-primary" type="submit">Save Bio</button>
@@ -58,16 +58,16 @@
                                     </div>
                                     <div class="row gx-0 gy-0">
                                         {% for day in student.day_set.all %}
-                                            <div class="col-sm">
-                                                {% for time in day.time_set.all %}
-                                                    {% if time.available %}
-                                                        <input type="checkbox" class="bg-light btn-check" name="available_times" id="{{ day.day }}{{ time.time }}" value="{{ day.day }}{{ time.time }}" autocomplete="off"  checked>
-                                                    {% else %}
-                                                        <input type="checkbox" class="bg-light btn-check " name="available_times" id="{{ day.day }}{{ time.time }}" value="{{ day.day }}{{ time.time }}" autocomplete="off" >
-                                                    {% endif %}
-                                                    <label class="btn border border-dark btn-outline-primary rounded-0" for="{{ day.day }}{{ time.time }}"><div style="height: 10px; width: 40"></div></label><br>
-                                                {% endfor %}
-                                            </div>
+                                        <div class="col-sm">
+                                            {% for time in day.time_set.all %}
+                                            {% if time.available %}
+                                            <input type="checkbox" class="bg-light btn-check" name="available_times" id="{{ day.day }}{{ time.time }}" value="{{ day.day }}{{ time.time }}" autocomplete="off" checked>
+                                            {% else %}
+                                            <input type="checkbox" class="bg-light btn-check " name="available_times" id="{{ day.day }}{{ time.time }}" value="{{ day.day }}{{ time.time }}" autocomplete="off">
+                                            {% endif %}
+                                            <label class="btn border border-dark btn-outline-primary rounded-0" for="{{ day.day }}{{ time.time }}"><div style="height: 10px; width: 40"></div></label><br>
+                                            {% endfor %}
+                                        </div>
                                         {% endfor %}
                                     </div>
                                 </div>
@@ -79,6 +79,11 @@
             </div>
         </div>
     </div>
+    <script>
+    </script>
 </body>
+
+
+
 
 
