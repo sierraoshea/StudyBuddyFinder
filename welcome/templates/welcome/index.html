@@ -91,20 +91,14 @@
                                         {% else %}
                                         {% if student in sent_requests %}
                                         <div class="float-end p-2"><button type="button" class="btn btn-secondary" disabled>Pending</button></div>
-                                        {% elif received_requests %}
-                                        {% for rr in received_requests %}
-                                        {% if student.id == rr.from_user_id %}
+                                        {% elif student in received_requests %}
                                         <div class="float-end p-2">
-                                            <form class="m-0" action="{% url 'accept friend request' rr.id %}" method="POST">
+                                            <form class="m-0" action="{% url 'accept friend request' user_to_id|get_item:student.id %}" method="POST">
                                                 {%csrf_token%}
                                                 <button class="btn btn-success m-1">Accept</button>
                                                 <button class="btn btn-danger m-1">Decline</button>
                                             </form>
                                         </div>
-                                        {%else%}
-                                        <div id="send_friend_request1"class="float-end p-2"><a href="{% url 'send friend request' student.id %}" class="btn btn-success" value="enter">Send Friend Request</a></div>
-                                        {%endif%}
-                                        {%endfor%}
                                         {% else %}
                                         <div id="send_friend_request1"class="float-end p-2"><a href="{% url 'send friend request' student.id %}" class="btn btn-success" value="enter">Send Friend Request</a></div>
                                         {% endif %}

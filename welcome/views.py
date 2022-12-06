@@ -38,7 +38,13 @@ def index(request):
         for thisRequest in request.user.from_user.all():
             sent_requests.append(thisRequest.to_user)
 
-        received_requests = request.user.to_user.all().values()
+        received_requests = []
+        user_to_id = {}
+        for thisRequest in request.user.to_user.all():
+            received_requests.append(thisRequest.from_user)
+            user_to_id[thisRequest.from_user.id] = thisRequest.id
+
+        print(user_to_id)
 
         if not request.user.day_set.all():
             days = ['M','T','W','Th','F','Sa','Su']
@@ -51,7 +57,7 @@ def index(request):
             active.append( request.user.classes.all()[0])
 
         
-        return render(request, 'welcome/index.html', {'meetings': meetings, 'sent_requests' : sent_requests, 'received_requests': received_requests, 'active':active})
+        return render(request, 'welcome/index.html', {'meetings': meetings, 'sent_requests' : sent_requests, 'received_requests': received_requests, 'active':active, 'user_to_id': user_to_id })
 
     return render(request, 'welcome/index.html')
 
