@@ -56,20 +56,20 @@
                 <div class="col-md-6">
                     <div class="col-md-12 p-2 bg-white rounded">
                         <h3 class="text-center m-2">Find Study Buddies</h3>
-
+                        
                         
                         {% if user.classes.all %}
                         <ul class="nav nav-tabs" id="myTab" role="tablist">
                             
                             {% for class in user.classes.all %}
-                                
+                            
                             <li class="nav-item" role="presentation">
                                 {% if class in active %}
-                                    <button class="nav-link active" id="{{ class.Name }}-tab" data-bs-toggle="tab" data-bs-target="#{{ class.Name }}" type="button" role="tab" aria-controls="{{ class.Name }}" aria-selected="false">{{ class.Name }}</button>
+                                <button class="nav-link active" id="{{ class.Name }}-tab" data-bs-toggle="tab" data-bs-target="#{{ class.Name }}" type="button" role="tab" aria-controls="{{ class.Name }}" aria-selected="false">{{ class.Name }}</button>
                                 {% else %}
-                                    <button class="nav-link" id="{{ class.Name }}-tab" data-bs-toggle="tab" data-bs-target="#{{ class.Name }}" type="button" role="tab" aria-controls="{{ class.Name }}" aria-selected="false">{{ class.Name }}</button>
+                                <button class="nav-link" id="{{ class.Name }}-tab" data-bs-toggle="tab" data-bs-target="#{{ class.Name }}" type="button" role="tab" aria-controls="{{ class.Name }}" aria-selected="false">{{ class.Name }}</button>
                                 {% endif %}
-                                </li>
+                            </li>
                             {% endfor %}
                             
                         </ul>
@@ -77,84 +77,101 @@
                             {% for class in user.classes.all %}
                             {% if class in active %}
                             <div class="tab-pane fade show active" id="{{ class.Name }}" role="tabpanel" aria-labelledby="{{ class.Name }}-tab">
-                            {% else %}
-                            <div class="tab-pane fade" id="{{ class.Name }}" role="tabpanel" aria-labelledby="{{ class.Name }}-tab">
-                            {% endif %}
-                                {% if class.students.all|all_but_user:user %}
-                                {% for student in class.students.all|all_but_user:user %}
-                                <div class=" border-bottom border-dark clearfix">
-                                    <a href="{% url 'viewuser' student.id %}">
-                                        <h5 class="float-start p-2" style="color:rgb(50, 48, 48)">{{ student.first_name }} {{ student.last_name }}</h5>
-                                    </a>
-                                    {% if student in user.user.friends.all %}
+                                {% else %}
+                                <div class="tab-pane fade" id="{{ class.Name }}" role="tabpanel" aria-labelledby="{{ class.Name }}-tab">
+                                    {% endif %}
+                                    {% if class.students.all|all_but_user:user %}
+                                    {% for student in class.students.all|all_but_user:user %}
+                                    <div class=" border-bottom border-dark clearfix">
+                                        <a href="{% url 'viewuser' student.id %}">
+                                            <h5 class="float-start p-2" style="color:rgb(50, 48, 48)">{{ student.first_name }} {{ student.last_name }}</h5>
+                                        </a>
+                                        {% if student in user.user.friends.all %}
                                         <div class="float-end p-2"><a href="{% url 'newmeeting' student.id %}" class="btn btn-warning">Schedule Meeting</a></div>
-                                    {% else %}
-                                        {% if student in sent_requests %}
-                                            <div class="float-end p-2"><button type="button" class="btn btn-secondary" disabled>Pending</button></div>
                                         {% else %}
-                                            <div id="send_friend_request"class="float-end p-2"><a href="{% url 'send friend request' student.id %}" class="btn btn-success" value="enter">Send Friend Request</a></div>
+                                        {% if student in sent_requests %}
+                                        <div class="float-end p-2"><button type="button" class="btn btn-secondary" disabled>Pending</button></div>
+                                        {% elif student in received_requests %}
+                                        <div class="float-end p-2">
+                                            <form class="m-0" action="{% url 'accept friend request' user_to_id|get_item:student.id %}" method="POST">
+                                                {%csrf_token%}
+                                                <button class="btn btn-success m-1">Accept</button>
+                                                <button class="btn btn-danger m-1">Decline</button>
+                                            </form>
+                                        </div>
+                                        {% else %}
+                                        <div id="send_friend_request1"class="float-end p-2"><a href="{% url 'send friend request' student.id %}" class="btn btn-success" value="enter">Send Friend Request</a></div>
                                         {% endif %}
+                                        {% endif %}
+                                    </div>
+                                    <br>
+                                    {% endfor %}
+                                    {% else %}
+                                    <p class="text-center p-1">There are no other students currently available to study for this class :(</p>
                                     {% endif %}
                                 </div>
-                                <br>
                                 {% endfor %}
-                                {% else %}
-                                <p class="text-center p-1">There are no other students currently available to study for this class :(</p>
-                                {% endif %}
                             </div>
-                            {% endfor %}
+                            {% else %}
+                            <p class="text-center p-1">You are not currently available for any classes.</p>
+                            {% endif %}
                         </div>
-                        {% else %}
-                        <p class="text-center p-1">You are not currently available for any classes.</p>
-                        {% endif %}
                     </div>
-                </div>
-                
-                
-                <div class="col-md-3">
                     
-                    <div class="col-md-12 p-2 bg-white rounded">
-                        <h3 class="text-center m-2">Upcoming Meetings</h3>
-                        {% if meetings %}
+                    
+                    <div class="col-md-3">
+                        
+                        <div class="col-md-12 p-2 bg-white rounded">
+                            <h3 class="text-center m-2">Upcoming Meetings</h3>
+                            {% if meetings %}
                             {% for meeting in meetings %}
-                                <div class="border border-dark p-2">
+                            <div class="border border-dark p-2">
                                 <h5 class="p-1 m-0">{{meeting.title}}</h5>
                                 <p class="p-1 m-0">{{meeting.date}} @ {{meeting.time}}</p>
                                 {%for participant in meeting.participants|all_but_user:user %}
-                                    <p class="p-1 m-0"> With: 
-                                        <a href="{% url 'viewuser' participant.id %}">
-                                            {{participant.first_name}} {{ participant.last_name }}
-                                        </a>
-                                        <br>
-                                        <a class="btn btn-info m-1" href="{% url 'edit_meeting' meeting.id %}" role="button">Edit</a>
-                                    </p>
+                                <p class="p-1 m-0"> With: 
+                                    <a href="{% url 'viewuser' participant.id %}">
+                                        {{participant.first_name}} {{ participant.last_name }}
+                                    </a>
+                                    <br>
+                                    <a class="btn btn-info m-1" href="{% url 'edit_meeting' meeting.id %}" role="button">Edit</a>
+                                </p>
                                 
                                 {%endfor%}
-                                </div>
+                            </div>
                             {%endfor%}
-                        {% else %}
-                        <p class="text-center p-1">You currently have no upcoming meetings</p>
-                        {% endif %}
+                            {% else %}
+                            <p class="text-center p-1">You currently have no upcoming meetings</p>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        {% endif %}
-        
-    </body>
-    
-    <!-- <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name = "viewpoint" content="width = device-width, initial-scale = 1.0">
-            <title>Document</title>
-            {%load static%}
-            <link rel = "stylesheet" href ="{% static 'page.css'%}">
-        </head>
-        <body>
-            <h2 class = "page">Welcome to Study Buddy Finder App</h2>
+            {% endif %}
         </body>
-        </html> -->
-        
-        
+
+        <footer>
+            <p> &copy; <em id="date"></em>Copyright 2022 CS3240-B-03 Project </p>
+        </footer>
+
+        <style>
+            body {
+                background-image: url("{% static 'background.jpg' %}");
+            }
+        </style>
+
+        <!-- <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name = "viewpoint" content="width = device-width, initial-scale = 1.0">
+                <title>Document</title>
+                {%load static%}
+                <link rel = "stylesheet" href ="{% static 'page.css'%}">
+            </head>
+            <body>
+                <h2 class = "page">Welcome to Study Buddy Finder App</h2>
+            </body>
+            </html> -->
+            
+            
