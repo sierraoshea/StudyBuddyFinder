@@ -30,5 +30,5 @@ urlpatterns = [
     path('myprofile/updatetimes', views.updateTimes, name='updatetimes'),
     path('myprofile', views.view_myprofile, name='myprofile'),
     path('myprofile/savebio', views.save_bio, name='savebio'),
-    path('remove_friend/<int:userID>/', views.remove_friend, name='remove friend'),
+    path('remove_friend/<int:userID>/', views.remove_friend, name='remove_friend'),
 ]
