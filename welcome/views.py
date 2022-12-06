@@ -236,13 +236,11 @@ def remove_friend(request, userID):
         if to_user_friendlist.exists():
             for i in to_user_friendlist:
                 i.friends.remove(from_user)
-                i.friends.save()
                 return HttpResponseRedirect(request, 'welcome/friends.html', {'friend_list_to_user': i.friends})
         from_user_friendlist = FriendList.objects.select_related().filter(user=from_user)
         if from_user_friendlist.exists():
             for j in from_user_friendlist:
                 j.friends.remove(to_user)
-                j.friends.save()
                 return HttpResponseRedirect(request, 'welcome/friends.html', {'friend_list_this_user': j.friends})
         room = UserToUserChat.objects.filter(user1=request.user) | UserToUserChat.objects.filter(user2=from_user)
         if room.exists():
