@@ -174,8 +174,7 @@ def update(request):
 def send_friend_request(request, userID):
     from_user = request.user
     to_user = User.objects.get(id=userID)
-    current_list = FriendList.objects.select_related().filter(user=request.user.id)
-    friend_request, created = Friend_Request.objects.get_or_create(from_user=from_user, to_user=to_user)
+    Friend_Request.objects.get_or_create(from_user=from_user, to_user=to_user)
     return HttpResponseRedirect(reverse('index'))
 
 

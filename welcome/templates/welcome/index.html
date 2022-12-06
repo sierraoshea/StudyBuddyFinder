@@ -84,7 +84,7 @@
                                 {% for student in class.students.all|all_but_user:user %}
                                 <div class=" border-bottom border-dark clearfix">
                                     <a href="{% url 'viewuser' student.id %}">
-                                        <h5 class="float-start p-2" >{{ student.first_name }} {{ student.last_name }}</h5>
+                                        <h5 class="float-start p-2" style="color:rgb(50, 48, 48)">{{ student.first_name }} {{ student.last_name }}</h5>
                                     </a>
                                     {% if student not in user.user.friends.all %}
                                         {% if student in sent_requests %}
