@@ -101,6 +101,8 @@
                                                 <button class="btn btn-danger m-1">Decline</button>
                                             </form>
                                         </div>
+                                        {%else%}
+                                        <div id="send_friend_request1"class="float-end p-2"><a href="{% url 'send friend request' student.id %}" class="btn btn-success" value="enter">Send Friend Request</a></div>
                                         {%endif%}
                                         {%endfor%}
                                         {% else %}
