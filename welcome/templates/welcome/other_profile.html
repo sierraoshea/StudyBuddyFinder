@@ -10,15 +10,15 @@
 <body style=" background-color:#159ec8c2;">
     
     <div class="d-flex justify-content-center" >
-        <div class="bg-light d-flex justify-content-center" style="height: 750px; width: 850;">
+        <div class="bg-light d-flex justify-content-center" style="height: 950px; width: 850;">
             <div class="bg-light" style="height: 450px; width: 700;">
-                <div class="border-bottom border-dark"><h1>{{ user.first_name }} {{user.last_name }}</h1></div>
+                <div class="border-bottom border-dark"><h1>{{ student.first_name }} {{student.last_name }}</h1></div>
                 <br>
                 
                 <div class="text-center" style=" background-color:#ececec;" >
                     <h3>Bio:</h3>
-                    {% if user.bio %}
-                        <p class="h-50 overflow-auto text-wrap text-break p-2">{{ user.bio.content }}</p>
+                    {% if student.bio %}
+                        <p class="h-50 overflow-auto text-wrap text-break p-2">{{ student.bio.content }}</p>
                     {% else %}
                         <p>Nothing here yet ¯\_(ツ)_/¯</p>
                     {% endif %}
@@ -27,20 +27,20 @@
                 <div class="container text-center">
                     <div class="row gx-0 gy-0">
                         <div class="col-md-2" style="height: 345px; width: 75">
-                            <div class="text-end" style="height: 20px; width: 0"></div>
-                            <div class="text-end" style="height: 24px; width: 0">10:00AM</div>
-                            <div class="text-end" style="height: 24px; width: 0">11:00AM</div>
-                            <div class="text-end" style="height: 24px; width: 0">12:00PM</div>
-                            <div class="pull-end" style="height: 24px; width: 0">1:00PM</div>
-                            <div class="pull-right" style="height: 24px; width: 0">2:00PM</div>
-                            <div class="text-center" style="height: 24px; width: 0">3:00PM</div>
-                            <div class="text-end" style="height: 24px; width: 0">4:00PM</div>
-                            <div class="text-end" style="height: 24px; width: 0">5:00PM</div>
-                            <div class="text-end" style="height: 24px; width: 0">6:00PM</div>
-                            <div class="text-end" style="height: 24px; width: 0">7:00PM</div>
-                            <div class="text-end" style="height: 24px; width: 0">8:00PM</div>
-                            <div class="text-end" style="height: 24px; width: 0">9:00PM</div>
-                            <div class="text-end" style="height: 24px; width: 0">10:00PM</div>
+                            <div class="text-end" style="height: 20px;"></div>
+                            <div class="text-end" style="height: 24px;">10:00AM</div>
+                            <div class="text-end" style="height: 24px;">11:00AM</div>
+                            <div class="text-end" style="height: 24px;">12:00PM</div>
+                            <div class="text-end" style="height: 24px;">1:00PM</div>
+                            <div class="text-end" style="height: 24px; ">2:00PM</div>
+                            <div class="text-end" style="height: 24px;">3:00PM</div>
+                            <div class="text-end" style="height: 24px; ">4:00PM</div>
+                            <div class="text-end" style="height: 24px;">5:00PM</div>
+                            <div class="text-end" style="height: 24px;">6:00PM</div>
+                            <div class="text-end" style="height: 24px;">7:00PM</div>
+                            <div class="text-end" style="height: 24px;">8:00PM</div>
+                            <div class="text-end" style="height: 24px;">9:00PM</div>
+                            <div class="text-end" style="height: 24px;">10:00PM</div>
                         </div>
                         <div class = "col-lg">
                             <div class ="row gx-0 gy-0">
@@ -53,7 +53,7 @@
                                 <h5 class="col-sm">Sun.</h5>
                             </div>
                             <div class="row gx-0 gy-0">
-                                {% for day in user.day_set.all %}
+                                {% for day in student.day_set.all %}
                                     <div class="col-sm">
                                         {% for time in day.time_set.all %}
                                             {% if time.available %}
@@ -68,6 +68,20 @@
                         </div>
                     </div>
                 </div>
+                <br>
+                <br>
+                {% if student in user.user.friends.all %}
+                    <div class="clearfix">
+                        <div class="float-start"><a href="{% url 'newmeeting' student.id %}" class="btn btn-primary">Schedule Meeting</a></div>
+                        <div class="float-end"><a href="{% url 'remove friend' student.id %}" class="btn btn-danger">Remove Friend</a></div>
+                    </div>
+                {% else %}
+                    {% if student in sent_requests %}
+                        <div class="text-center"><button type="button" class="btn btn-secondary" disabled>Friend Request Pending</button></div>
+                    {% else %}
+                        <div class="text-center"><a href="{% url 'send friend request' student.id %}" class="btn btn-success" value="enter">Send Friend Request</a></div>
+                    {% endif %}
+                {% endif %}
             </div>
         </div>
     </div>
