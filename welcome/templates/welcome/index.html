@@ -93,7 +93,7 @@
                                             <div id="send_friend_request"class="float-end p-2"><a href="{% url 'send friend request' student.id %}" class="btn btn-success" value="enter">Send Friend Request</a></div>
                                         {% endif %}
                                     {% else %}
-                                        <div class="float-end p-2"><a href="{% url 'newmeeting' student.id %}" class="btn btn-primary">Schedule Meeting</a></div>
+                                        <div class="float-end p-2"><a href="{% url 'newmeeting' student.id %}" class="btn btn-warning">Schedule Meeting</a></div>
                                     {% endif %}
                                 </div>
                                 <br>

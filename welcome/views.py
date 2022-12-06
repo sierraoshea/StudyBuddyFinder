@@ -176,18 +176,7 @@ def send_friend_request(request, userID):
     to_user = User.objects.get(id=userID)
     current_list = FriendList.objects.select_related().filter(user=request.user.id)
     friend_request, created = Friend_Request.objects.get_or_create(from_user=from_user, to_user=to_user)
-    friend_requests = Friend_Request.objects.filter(from_user=from_user, to_user=to_user)
-    if created:
-        if friend_requests.exists():
-            return render(request, 'welcome/index.html', {'friend_requests_all': friend_requests})
-        else:
-            return HttpResponseRedirect(reverse('index'))
-    else:
-        friend_request.save()
-        if friend_requests.exists():
-            return render(request, 'welcome/index.html', {'friend_requests_all': friend_requests})
-        else:
-            return HttpResponseRedirect(reverse('index'))
+    return HttpResponseRedirect(reverse('index'))
 
 
 
