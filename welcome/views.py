@@ -28,15 +28,18 @@ import random
 
 def index(request):
     if request.user.is_authenticated:
-        meetings = meeting.objects.filter(participants=request.user, date__gte = datetime.today(), time__gte =datetime.today()).order_by('date')
-        meetings_old = meeting.objects.filter(date__lt = datetime.today(), time__lt = datetime.today())
+        meetings = meeting.objects.filter(participants=request.user, date__gte = datetime.today()).order_by('date')
+        meetings_old = meeting.objects.filter(date__lt = datetime.today())
 
         for old_meeting in meetings_old:
             old_meeting.delete()
 
-        requests = []
+        sent_requests = []
         for thisRequest in request.user.from_user.all():
-            requests.append(thisRequest.to_user)
+            sent_requests.append(thisRequest.to_user)
+
+        received_requests = request.user.to_user.all().values()
+
         if not request.user.day_set.all():
             days = ['M','T','W','Th','F','Sa','Su']
             for day in days:
@@ -48,7 +51,7 @@ def index(request):
             active.append( request.user.classes.all()[0])
 
         
-        return render(request, 'welcome/index.html', {'meetings': meetings, 'sent_requests' : requests, 'active':active})
+        return render(request, 'welcome/index.html', {'meetings': meetings, 'sent_requests' : sent_requests, 'received_requests': received_requests, 'active':active})
 
     return render(request, 'welcome/index.html')
 
