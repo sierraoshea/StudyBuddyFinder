@@ -70,17 +70,17 @@
                 </div>
                 <br>
                 <br>
-                {% if student not in user.user.friends.all %}
+                {% if student in user.user.friends.all %}
+                    <div class="clearfix">
+                        <div class="float-start"><a href="{% url 'newmeeting' student.id %}" class="btn btn-primary">Schedule Meeting</a></div>
+                        <div class="float-end"><a href="{% url 'remove friend' student.id %}" class="btn btn-danger">Remove Friend</a></div>
+                    </div>
+                {% else %}
                     {% if student in sent_requests %}
                         <div class="text-center"><button type="button" class="btn btn-secondary" disabled>Friend Request Pending</button></div>
                     {% else %}
-                    <div class="text-center"><a href="{% url 'send friend request' student.id %}" class="btn btn-success" value="enter">Send Friend Request</a></div>
+                        <div class="text-center"><a href="{% url 'send friend request' student.id %}" class="btn btn-success" value="enter">Send Friend Request</a></div>
                     {% endif %}
-                {% else %}
-                <div class="clearfix">
-                    <div class="float-start"><a href="{% url 'newmeeting' student.id %}" class="btn btn-primary">Schedule Meeting</a></div>
-                    <div class="float-end"><a href="{% url 'remove friend' student.id %}" class="btn btn-danger">Remove Friend</a></div>
-                </div>    
                 {% endif %}
             </div>
         </div>
