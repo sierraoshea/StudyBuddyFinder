@@ -27,5 +27,11 @@ You can log in with your Google accounts. JUst click the "log in" button.
 Log in
 ```
 ## Find a study buddy
+You can edit your classes and schedule time to find a study buddy who has similar schedule and classes. Then you can add as a study buddy
+
+
+
+
+
 
 
