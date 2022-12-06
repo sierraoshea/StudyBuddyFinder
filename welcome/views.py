@@ -7,7 +7,6 @@ from django.urls import reverse
 from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
-
 from django.shortcuts import redirect
 from .forms import EditProfileForm
 from .models import UserClasses, Class, UserToUserChat, Time, Day, meeting, Bio, Message
@@ -19,6 +18,9 @@ from django.core.exceptions import ValidationError
 from .models import Friend_Request
 from .models import Class
 from .models import FriendList
+from django.db.models import Q
+from datetime import datetime
+
 
 import string
 import random
@@ -26,18 +28,27 @@ import random
 
 def index(request):
     if request.user.is_authenticated:
-        meetings = meeting.objects.filter(participants=request.user).order_by('date')
+        meetings = meeting.objects.filter(participants=request.user, date__gte = datetime.today(), time__gte =datetime.today()).order_by('date')
+        meetings_old = meeting.objects.filter(date__lt = datetime.today(), time__lt = datetime.today())
+
+        for old_meeting in meetings_old:
+            old_meeting.delete()
+
+        requests = []
+        for thisRequest in request.user.from_user.all():
+            requests.append(thisRequest.to_user)
         if not request.user.day_set.all():
             days = ['M','T','W','Th','F','Sa','Su']
             for day in days:
                 thisday = Day.objects.create(user= request.user, day = day)
                 for j in range(10, 23):
                     Time.objects.create(day = thisday, time = str(j)+":00")
-        current_list = FriendList.objects.select_related().filter(user=request.user.id)
-        if current_list.exists():
-            friend_list = current_list.first().friends
-            return render(request, 'welcome/index.html', {'friends_for_user': friend_list, 'meetings': meetings})
-        return render(request, 'welcome/index.html', {'meetings': meetings})
+        active =[]
+        if request.user.classes.all():
+            active.append( request.user.classes.all()[0])
+
+        
+        return render(request, 'welcome/index.html', {'meetings': meetings, 'sent_requests' : requests, 'active':active})
 
     return render(request, 'welcome/index.html')
 
@@ -75,7 +86,7 @@ def delete_class(request):
             try:
                 thisclass = Class.objects.get(Name=id.subject + str(id.catalog_number))
                 thisclass.students.remove(request.user)
-            except:
+            except(KeyError):
                 pass
             id.delete()
 
@@ -92,19 +103,20 @@ def add_classes(request):
         add = True
         for class_to_add in selected_classes:
             c = class_to_add.split("/")
-            UserClasses.objects.create(user=request.user,subject=c[0], catalog_number=c[1], component=c[2], section=c[3], professor=c[4])
+            UserClasses.objects.create(user=request.user,subject=c[0], catalog_number=c[1], component=c[2], section=c[3], professor=c[4], description=c[5])
         return HttpResponseRedirect(reverse('classes'))
 
 
 def subject_view(request, subject):
     classes = requests.get('http://luthers-list.herokuapp.com/api/dept/' + subject + '/?format=json').json()
     
-    
+    current_classes = UserClasses.objects.filter(user=request.user)
+
     result = {
             key : list(group) for key, group in groupby(classes,key=lambda x:x['subject'] + " " + x['catalog_number'] + " " + x['description'])
            } 
 
-    return render(request, 'welcome/subject.html', {'classes': result})
+    return render(request, 'welcome/subject.html', {'classes': result, 'current_classes': current_classes, "sub": subject})
 
 
 def search_classes(request):
@@ -118,8 +130,16 @@ def search_classes(request):
 
 
 def view_other_user(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
-    return render(request, 'welcome/other_profile.html', {'user' : user} )
+    if user_id == request.user.id:
+        return view_myprofile(request)
+    
+    student = get_object_or_404(User, pk=user_id)
+
+    requests = []
+    for thisRequest in request.user.from_user.all():
+        requests.append(thisRequest.to_user)
+
+    return render(request, 'welcome/other_profile.html', {'student' : student, 'sent_requests': requests} )
 
 
 def update(request):
@@ -162,20 +182,8 @@ def update(request):
 def send_friend_request(request, userID):
     from_user = request.user
     to_user = User.objects.get(id=userID)
-    current_list = FriendList.objects.select_related().filter(user=request.user.id)
-    friend_request, created = Friend_Request.objects.get_or_create(from_user=from_user, to_user=to_user)
-    friend_requests = Friend_Request.objects.filter(from_user=from_user, to_user=to_user)
-    if created:
-        if friend_requests.exists():
-            return render(request, 'welcome/index.html', {'friend_requests_all': friend_requests})
-        else:
-            return HttpResponseRedirect(reverse('index'))
-    else:
-        friend_request.save()
-        if friend_requests.exists():
-            return render(request, 'welcome/index.html', {'friend_requests_all': friend_requests})
-        else:
-            return HttpResponseRedirect(reverse('index'))
+    Friend_Request.objects.get_or_create(from_user=from_user, to_user=to_user)
+    return HttpResponseRedirect(reverse('index'))
 
 
 
@@ -328,13 +336,60 @@ def confirm_meeting(request, reciever_id):
     date = request.POST.get('date')
     time = request.POST.get('time')
 
+    date_as_date = datetime.strptime(date + " " + time + ":00", "%Y-%m-%d %H:%M:%S")
+
+    if(date_as_date < datetime.today()):
+        return render(request, "welcome/newmeeting.html", {'reciever' : reciever, 'errmsg':'Please enter a valid date and time.'})
     
     try:
-        newmeeting= meeting.objects.create(title=title, date=date, time=time)
+        newmeeting = meeting.objects.create(title=title, date=date, time=time)
     except(ValidationError):
         return render(request, "welcome/newmeeting.html", {'reciever' : reciever, 'errmsg':'Please fill out all fields.'})
+    
     newmeeting.participants.add(request.user, reciever)
     newmeeting.save()
+
+    return HttpResponseRedirect(reverse('index'))
+
+def edit_meeting(request, meeting_id):
+    m = meeting.objects.get(id=meeting_id)
+    reciever = m.participants.all().get(~Q(id=request.user.id))
+
+    return render(request, "welcome/edit_meeting.html", {'meeting' : m, 'reciever':reciever, 'errmsg':''})
+
+def update_meeting(request, meeting_id):
+    meet = meeting.objects.get(id=meeting_id)
+    reciever = meet.participants.all().get(~Q(id=request.user.id))
+    title = request.POST.get('title')
+    date = request.POST.get('date')
+    time = request.POST.get('time')
+
+    if(time[-3:] == ".00"):
+        time = time[:-6]
+
+    date_as_date = datetime.strptime(date + " " + time + ":00", "%Y-%m-%d %H:%M:%S")
+
+    if(date_as_date < datetime.today()):
+        return render(request, "welcome/edit_meeting.html", {'meeting' : meet, 'reciever' : reciever, 'errmsg':'Please enter a valid date and time.'})
+    
+    try:
+        meet.title = title
+        meet.date = date
+        meet.time = time
+    except(ValidationError):
+        return render(request, "welcome/edit_meeting.html", {'meeting' : meet, 'reciever' : reciever, 'errmsg':'Please fill out all fields.'})
+    
+    meet.save()
+
+    return HttpResponseRedirect(reverse('index'))
+
+def delete_meeting(request, meeting_id):
+    try:
+        meet = meeting.objects.get(id=meeting_id)
+    except(KeyError):
+        return HttpResponseRedirect(reverse('index'))
+
+    meet.delete()
 
     return HttpResponseRedirect(reverse('index'))
 
