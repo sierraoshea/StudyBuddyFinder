@@ -12,6 +12,7 @@ class UserClasses(models.Model):
     section = models.IntegerField()
     professor = models.CharField(max_length=200)
     available = models.BooleanField(default=False)
+    description = models.CharField(max_length=200)
 
     def __str__(self):
         if self.professor == "-":
