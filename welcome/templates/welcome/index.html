@@ -117,14 +117,16 @@
                         <h3 class="text-center m-2">Upcoming Meetings</h3>
                         {% if meetings %}
                             {% for meeting in meetings %}
-                                <div class="border-0 border-top border-dark">
+                                <div class="border border-dark p-2">
                                 <h5 class="p-1 m-0">{{meeting.title}}</h5>
                                 <p class="p-1 m-0">{{meeting.date}} @ {{meeting.time}}</p>
                                 {%for participant in meeting.participants|all_but_user:user %}
-                                    <p class="p-1"> With: 
+                                    <p class="p-1 m-0"> With: 
                                         <a href="{% url 'viewuser' participant.id %}">
                                             {{participant.first_name}} {{ participant.last_name }}
                                         </a>
+                                        <br>
+                                        <a class="btn btn-info m-1" href="{% url 'edit_meeting' meeting.id %}" role="button">Edit</a>
                                     </p>
                                 
                                 {%endfor%}

@@ -9,34 +9,37 @@
 {% include 'welcome/base.html' %}
 
 <br>
-<h1 class="text-center">New Meeting:</h1><br>
+<h1 class="text-center">Edit Meeting:</h1><br>
 <br>
 <div class="container">
     <div class="row">
         <div class ="col-md-5 bg-light">
-            <form action="{% url 'confmeeting' reciever.id %}" method = "post">
+            <form action="{% url 'update_meeting' meeting.id %}" method = "post">
                 {% csrf_token %}
                 <br>
                 <br><br>
                 <div class="mb-3">
                     <label for="title" class="form-label">Title</label>
-                    <input type="text" class="form-control" id="title" name="title" required>
+                    <input type="text" class="form-control" id="title" name="title" value="{{meeting.title}}" required >
                 </div>
                 <div class="mb-3">
                     <label for="date" class="form-label">Date</label>
-                    <input type="date" class="form-control" id="date" name="date" required>
+                    <input type="date" class="form-control" id="date" name="date" value="{{meeting.date|date:'Y-m-d'}}" required>
                 </div>
                 <div class="mb-3">
                     <label for="time" class="form-label">Time</label>
-                    <input type="time" class="form-control" id="time" name="time" required>
+                    <input type="time" class="form-control" id="time" name="time" value="{{meeting.time|time:'H:i:s.00'}}" required>
                 </div>
                 <br>
                 <p class="text-center">{{ errmsg }}</p>
-                <div><div class="text-center"><button type="submit" value="submit" class="btn btn-primary">Confirm</button></div></div>
+                <div><div class="text-center">
+                    <button type="submit" value="submit" class="btn btn-primary m-1">Update</button>
+                    <a role="button" href="{% url 'delete_meeting' meeting.id %}" class="btn btn-danger m-1" >Delete</a>
+                </div></div>
             </form>
-
+            
         </div>
-    
+        
         <div class="bg-light col-md-5" style="height: 450px; width: 750">
             <br>
             <h3 class="text-center">{{ reciever.first_name }}'s Availablility:</h3>
@@ -70,15 +73,15 @@
                         </div>
                         <div class="row gx-0 gy-0">
                             {% for day in reciever.day_set.all %}
-                                <div class="col-sm">
-                                    {% for time in day.time_set.all %}
-                                        {% if time.available %}
-                                            <div class="bg-primary border-primary" style="height: 24px; width: 75"></div>
-                                        {% else %}
-                                            <div class="border border-primary" style="height: 24px; width: 75"></div>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
+                            <div class="col-sm">
+                                {% for time in day.time_set.all %}
+                                {% if time.available %}
+                                <div class="bg-primary border-primary" style="height: 24px; width: 75"></div>
+                                {% else %}
+                                <div class="border border-primary" style="height: 24px; width: 75"></div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
                             {% endfor %}
                         </div>
                     </div>
