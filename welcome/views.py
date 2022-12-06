@@ -398,10 +398,10 @@ def page(request):
 
 
 # Things to ask about:
-# make sure you cannot add classes twice
 # be able to sort users based on certain features
 # change the setup of the page when you are not logged in
-# if you change friends on backend it does not update main friends
-# make sure you are showing the correct friend list once you remove people
 # fix remove friend so it actually removes them
+# add bios below adding each user other than the name
+#
+
 
