@@ -7,7 +7,6 @@ from django.urls import reverse
 from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
-
 from django.shortcuts import redirect
 from .forms import EditProfileForm
 from .models import UserClasses, Class, UserToUserChat, Time, Day, meeting, Bio, Message
@@ -19,6 +18,9 @@ from django.core.exceptions import ValidationError
 from .models import Friend_Request
 from .models import Class
 from .models import FriendList
+from django.db.models import Q
+from datetime import datetime
+
 
 import string
 import random
@@ -26,7 +28,12 @@ import random
 
 def index(request):
     if request.user.is_authenticated:
-        meetings = meeting.objects.filter(participants=request.user).order_by('date')
+        meetings = meeting.objects.filter(participants=request.user, date__gte = datetime.today(), time__gte =datetime.today()).order_by('date')
+        meetings_old = meeting.objects.filter(date__lt = datetime.today(), time__lt = datetime.today())
+
+        for old_meeting in meetings_old:
+            old_meeting.delete()
+
         if not request.user.day_set.all():
             days = ['M','T','W','Th','F','Sa','Su']
             for day in days:
@@ -92,19 +99,20 @@ def add_classes(request):
         add = True
         for class_to_add in selected_classes:
             c = class_to_add.split("/")
-            UserClasses.objects.create(user=request.user,subject=c[0], catalog_number=c[1], component=c[2], section=c[3], professor=c[4])
+            UserClasses.objects.create(user=request.user,subject=c[0], catalog_number=c[1], component=c[2], section=c[3], professor=c[4], description=c[5])
         return HttpResponseRedirect(reverse('classes'))
 
 
 def subject_view(request, subject):
     classes = requests.get('http://luthers-list.herokuapp.com/api/dept/' + subject + '/?format=json').json()
     
-    
+    current_classes = UserClasses.objects.filter(user=request.user)
+
     result = {
             key : list(group) for key, group in groupby(classes,key=lambda x:x['subject'] + " " + x['catalog_number'] + " " + x['description'])
            } 
 
-    return render(request, 'welcome/subject.html', {'classes': result})
+    return render(request, 'welcome/subject.html', {'classes': result, 'current_classes': current_classes, "sub": subject})
 
 
 def search_classes(request):
@@ -119,7 +127,7 @@ def search_classes(request):
 
 def view_other_user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
-    return render(request, 'welcome/other_profile.html', {'user' : user} )
+    return render(request, 'welcome/other_profile.html', {'other_user' : user} )
 
 
 def update(request):
@@ -328,13 +336,60 @@ def confirm_meeting(request, reciever_id):
     date = request.POST.get('date')
     time = request.POST.get('time')
 
+    date_as_date = datetime.strptime(date + " " + time + ":00", "%Y-%m-%d %H:%M:%S")
+
+    if(date_as_date < datetime.today()):
+        return render(request, "welcome/newmeeting.html", {'reciever' : reciever, 'errmsg':'Please enter a valid date and time.'})
     
     try:
-        newmeeting= meeting.objects.create(title=title, date=date, time=time)
+        newmeeting = meeting.objects.create(title=title, date=date, time=time)
     except(ValidationError):
         return render(request, "welcome/newmeeting.html", {'reciever' : reciever, 'errmsg':'Please fill out all fields.'})
+    
     newmeeting.participants.add(request.user, reciever)
     newmeeting.save()
+
+    return HttpResponseRedirect(reverse('index'))
+
+def edit_meeting(request, meeting_id):
+    m = meeting.objects.get(id=meeting_id)
+    reciever = m.participants.all().get(~Q(id=request.user.id))
+
+    return render(request, "welcome/edit_meeting.html", {'meeting' : m, 'reciever':reciever, 'errmsg':''})
+
+def update_meeting(request, meeting_id):
+    meet = meeting.objects.get(id=meeting_id)
+    reciever = meet.participants.all().get(~Q(id=request.user.id))
+    title = request.POST.get('title')
+    date = request.POST.get('date')
+    time = request.POST.get('time')
+
+    if(time[-3:] == ".00"):
+        time = time[:-6]
+
+    date_as_date = datetime.strptime(date + " " + time + ":00", "%Y-%m-%d %H:%M:%S")
+
+    if(date_as_date < datetime.today()):
+        return render(request, "welcome/edit_meeting.html", {'meeting' : meet, 'reciever' : reciever, 'errmsg':'Please enter a valid date and time.'})
+    
+    try:
+        meet.title = title
+        meet.date = date
+        meet.time = time
+    except(ValidationError):
+        return render(request, "welcome/edit_meeting.html", {'meeting' : meet, 'reciever' : reciever, 'errmsg':'Please fill out all fields.'})
+    
+    meet.save()
+
+    return HttpResponseRedirect(reverse('index'))
+
+def delete_meeting(request, meeting_id):
+    try:
+        meet = meeting.objects.get(id=meeting_id)
+    except(KeyError):
+        return HttpResponseRedirect(reverse('index'))
+
+    meet.delete()
 
     return HttpResponseRedirect(reverse('index'))
 

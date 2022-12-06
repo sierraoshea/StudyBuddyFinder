@@ -5,6 +5,7 @@ from django.contrib.auth.admin import UserAdmin
 from .models import Class
 from .models import FriendList
 from .models import Friend_Request
+from .models import meeting
 
 class ClassesInline(admin.TabularInline):
     model = UserClasses
@@ -20,3 +21,4 @@ admin.site.register(FriendList)
 admin.site.register(Friend_Request)
 admin.site.register(UserToUserChat)
 admin.site.register(Message)
+admin.site.register(meeting)
