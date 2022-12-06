@@ -15,7 +15,9 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                {% if user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link active text-light" aria-current="page" href="{% url 'index' %}">Home</a>
                 </li>
@@ -26,7 +28,9 @@
                     <a class="nav-link active text-light" aria-current="page" href="{% url 'myprofile' %}">About Me</a>
                 </li>
                 <li><a class="nav-link active text-light" aria-current="page" href="{% url 'room' room_name='default' %}">Chat</a></li>
+                {% endif %}
             </ul>
+            
             {% if user.is_authenticated %}
             <div class="d-flex m-0" style="white-space:normal">
                 <a href="{% url 'profile' %}" class="btn btn-success rounded-0">{{ user.username|upper|slice:":1" }}</a>
@@ -37,6 +41,37 @@
         </div>
     </div>
 </nav>
+
+{% if not user.is_authenticated %}
+<div class="text-center">
+    <h1> Welcome to Team B-03's Studdy Buddy Finder!</h1>
+</div>
+<br>
+<br>
+<div class="d-flex justify-content-center">
+    <div class="" style="height: 345px; width: 600px">
+        <p1>Having trouble finding good studdy buddies for your classes at UVA? Well look no further! This site has everything you need to find and coordinate with a your own studdy buddy circle.</p1><br><br>
+        <p1>Using this site you will be able to:</p1>
+        <br>
+        <br>
+        
+        <ul>
+            <li>Find other students looking for studdy buddies in your classes</li>
+            <li>View student profiles to look for compatibility</li>
+            <li>Add other students as buddies</li>
+            <li>Schedule meetings and chat with your buddies</li>
+            <li>And more!</li>
+        </ul>
+        <br>
+        <p1>Login below to get started!</p1>
+        <br>
+        <br>
+        <div class="text-center">
+            <a class="btn btn-success" href="{% provider_login_url 'google' %}" role="button">Login with Google</a>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 <script type="text/javascript">
     document.getElementById("#profile_button").onclick = function () {

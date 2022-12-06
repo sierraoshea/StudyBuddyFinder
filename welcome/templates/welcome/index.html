@@ -56,20 +56,30 @@
                 <div class="col-md-6">
                     <div class="col-md-12 p-2 bg-white rounded">
                         <h3 class="text-center m-2">Find Study Buddies</h3>
+
                         
                         {% if user.classes.all %}
                         <ul class="nav nav-tabs" id="myTab" role="tablist">
                             
                             {% for class in user.classes.all %}
+                                
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="{{ class.Name }}-tab" data-bs-toggle="tab" data-bs-target="#{{ class.Name }}" type="button" role="tab" aria-controls="{{ class.Name }}" aria-selected="false">{{ class.Name }}</button>
-                            </li>
+                                {% if class in active %}
+                                    <button class="nav-link active" id="{{ class.Name }}-tab" data-bs-toggle="tab" data-bs-target="#{{ class.Name }}" type="button" role="tab" aria-controls="{{ class.Name }}" aria-selected="false">{{ class.Name }}</button>
+                                {% else %}
+                                    <button class="nav-link" id="{{ class.Name }}-tab" data-bs-toggle="tab" data-bs-target="#{{ class.Name }}" type="button" role="tab" aria-controls="{{ class.Name }}" aria-selected="false">{{ class.Name }}</button>
+                                {% endif %}
+                                </li>
                             {% endfor %}
                             
                         </ul>
                         <div class="tab-content" id="myTabContent">
                             {% for class in user.classes.all %}
-                            <div class="tab-pane fade" id="{{ class.Name }}" role="tabpanel" aria-labelledby="{{ class.Name }}-tab"> 
+                            {% if class in active %}
+                            <div class="tab-pane fade show active" id="{{ class.Name }}" role="tabpanel" aria-labelledby="{{ class.Name }}-tab">
+                            {% else %}
+                            <div class="tab-pane fade" id="{{ class.Name }}" role="tabpanel" aria-labelledby="{{ class.Name }}-tab">
+                            {% endif %}
                                 {% if class.students.all|all_but_user:user %}
                                 {% for student in class.students.all|all_but_user:user %}
                                 <div class=" border-bottom border-dark clearfix">
@@ -77,13 +87,13 @@
                                         <h5 class="float-start p-2" >{{ student.first_name }} {{ student.last_name }}</h5>
                                     </a>
                                     {% if student not in user.user.friends.all %}
-                                        {% if friend_requests_all %}
-                                            <div class="float-end p-2"><button type="button" class="btn btn-secondary btn-lg" disabled>Pending</button></div>
+                                        {% if student in sent_requests %}
+                                            <div class="float-end p-2"><button type="button" class="btn btn-secondary" disabled>Pending</button></div>
                                         {% else %}
                                             <div id="send_friend_request"class="float-end p-2"><a href="{% url 'send friend request' student.id %}" class="btn btn-success" value="enter">Send Friend Request</a></div>
                                         {% endif %}
                                     {% else %}
-                                        <div class="float-end p-2"><a href="{% url 'newmeeting' student.id %}" class="btn btn-success">Schedule Meeting</a></div>
+                                        <div class="float-end p-2"><a href="{% url 'newmeeting' student.id %}" class="btn btn-warning">Schedule Meeting</a></div>
                                     {% endif %}
                                 </div>
                                 <br>
@@ -95,7 +105,7 @@
                             {% endfor %}
                         </div>
                         {% else %}
-                        <p class="text-center p-1">You have no classes added to your profile.</p>
+                        <p class="text-center p-1">You are not currently available for any classes.</p>
                         {% endif %}
                     </div>
                 </div>
@@ -107,8 +117,9 @@
                         <h3 class="text-center m-2">Upcoming Meetings</h3>
                         {% if meetings %}
                             {% for meeting in meetings %}
-                                <h5 class="p-1 m-0 border border-bottom-0">{{meeting.title}}</h5>
-                                <p class="p-1 m-0 border border-top-0 border-bottom-0">{{meeting.date}} @ {{meeting.time}}</p>
+                                <div class="border-0 border-top border-dark">
+                                <h5 class="p-1 m-0">{{meeting.title}}</h5>
+                                <p class="p-1 m-0">{{meeting.date}} @ {{meeting.time}}</p>
                                 {%for participant in meeting.participants|all_but_user:user %}
                                     <p class="p-1 border border-top-0"> With: 
                                         <a href="{% url 'viewuser' participant.id %}">
@@ -119,6 +130,7 @@
                                     </p>
                                 
                                 {%endfor%}
+                                </div>
                             {%endfor%}
                         {% else %}
                         <p class="text-center p-1">You currently have no upcoming meetings</p>

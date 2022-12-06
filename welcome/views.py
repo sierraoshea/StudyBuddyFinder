@@ -34,17 +34,21 @@ def index(request):
         for old_meeting in meetings_old:
             old_meeting.delete()
 
+        requests = []
+        for thisRequest in request.user.from_user.all():
+            requests.append(thisRequest.to_user)
         if not request.user.day_set.all():
             days = ['M','T','W','Th','F','Sa','Su']
             for day in days:
                 thisday = Day.objects.create(user= request.user, day = day)
                 for j in range(10, 23):
                     Time.objects.create(day = thisday, time = str(j)+":00")
-        current_list = FriendList.objects.select_related().filter(user=request.user.id)
-        if current_list.exists():
-            friend_list = current_list.first().friends
-            return render(request, 'welcome/index.html', {'friends_for_user': friend_list, 'meetings': meetings})
-        return render(request, 'welcome/index.html', {'meetings': meetings})
+        active =[]
+        if request.user.classes.all():
+            active.append( request.user.classes.all()[0])
+
+        
+        return render(request, 'welcome/index.html', {'meetings': meetings, 'sent_requests' : requests, 'active':active})
 
     return render(request, 'welcome/index.html')
 
@@ -82,7 +86,7 @@ def delete_class(request):
             try:
                 thisclass = Class.objects.get(Name=id.subject + str(id.catalog_number))
                 thisclass.students.remove(request.user)
-            except:
+            except(KeyError):
                 pass
             id.delete()
 
@@ -126,8 +130,16 @@ def search_classes(request):
 
 
 def view_other_user(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
-    return render(request, 'welcome/other_profile.html', {'other_user' : user} )
+    if user_id == request.user.id:
+        return view_myprofile(request)
+    
+    student = get_object_or_404(User, pk=user_id)
+
+    requests = []
+    for thisRequest in request.user.from_user.all():
+        requests.append(thisRequest.to_user)
+
+    return render(request, 'welcome/other_profile.html', {'student' : student, 'sent_requests': requests} )
 
 
 def update(request):
@@ -172,18 +184,7 @@ def send_friend_request(request, userID):
     to_user = User.objects.get(id=userID)
     current_list = FriendList.objects.select_related().filter(user=request.user.id)
     friend_request, created = Friend_Request.objects.get_or_create(from_user=from_user, to_user=to_user)
-    friend_requests = Friend_Request.objects.filter(from_user=from_user, to_user=to_user)
-    if created:
-        if friend_requests.exists():
-            return render(request, 'welcome/index.html', {'friend_requests_all': friend_requests})
-        else:
-            return HttpResponseRedirect(reverse('index'))
-    else:
-        friend_request.save()
-        if friend_requests.exists():
-            return render(request, 'welcome/index.html', {'friend_requests_all': friend_requests})
-        else:
-            return HttpResponseRedirect(reverse('index'))
+    return HttpResponseRedirect(reverse('index'))
 
 
 

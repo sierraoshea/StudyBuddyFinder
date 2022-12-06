@@ -40,7 +40,7 @@
             </div>
         <div class="col-md-6 m-2 bg-white rounded">
                 <h3 class="text-center m-2">Friends</h3>
-            {% for friend in friend_list_this_user.all %}
+            {% for friend in user.user.friends.all %}
                 <p>{{ friend.first_name }} {{ friend.last_name }}</p>
                     <div class="float-end p-2"><a href= "{% url 'remove friend' friend.id %}" class="btn btn-success" method="POST">Remove Friend</a></div>
                      {% csrf_token %}
