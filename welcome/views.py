@@ -33,7 +33,7 @@ def index(request):
 
         for old_meeting in meetings_old:
             old_meeting.delete()
-
+        
         requests = []
         for thisRequest in request.user.from_user.all():
             requests.append(thisRequest.to_user)
