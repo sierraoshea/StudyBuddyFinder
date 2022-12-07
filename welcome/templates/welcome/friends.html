@@ -7,6 +7,7 @@
 
 {% include 'welcome/base.html' %}
 {% if user.is_authenticated %}
+<body style="background-color:#f8f4fc;">
 <div class="container-fluid m-3">
     <div class="row" data-masonry='{"percentPosition": true}'>
         <div class="col-md-3 m-2 bg-white rounded">
@@ -55,7 +56,8 @@
                 <div class="float-end p-2"><a href="{% url 'newmeeting' friend.id %}" class="btn btn-warning">Schedule Meeting</a></div>
             </div>
             {% endfor %}
-
-    </div>
+         </div>
 </div>
+</div>
+</body>
 
