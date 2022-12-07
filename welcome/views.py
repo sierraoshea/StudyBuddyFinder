@@ -408,8 +408,7 @@ def page(request):
 # Things to ask about:
 # be able to sort users based on certain features
 # change the setup of the page when you are not logged in
-# fix remove friend so it actually removes them
 # add bios below adding each user other than the name
-#
+
 
 

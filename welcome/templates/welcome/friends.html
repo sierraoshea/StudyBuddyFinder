@@ -40,16 +40,22 @@
         </div>
         <div class="col-md-6 m-2 bg-white rounded">
             <h3 class="text-center m-2">Friends</h3>
+            <p class="text-center m-2"> Here are your friends from your classes. Click on their name to learn more about them:</p>
             {% for friend in friend_list.all %}
-            <p>{{ friend.first_name }} {{ friend.last_name }}</p>
+            <div class=" border-bottom border-dark clearfix">
+            <a href="{% url 'viewuser' friend.id %}">
+                <h5 class="float-start p-2" style="color:rgb(50, 48, 48)">{{ friend.first_name }} {{ friend.last_name }}</h5>
+            </a>
             <div class="float-end p-2">
                 <form action="{% url 'remove_friend' friend.id %}" method="POST">
                     {% csrf_token %}
                     <button class="btn btn-success">Remove Friend</button>
                 </form>
             </div>
+                <div class="float-end p-2"><a href="{% url 'newmeeting' friend.id %}" class="btn btn-warning">Schedule Meeting</a></div>
+            </div>
             {% endfor %}
-        </div>
+
     </div>
 </div>
 
