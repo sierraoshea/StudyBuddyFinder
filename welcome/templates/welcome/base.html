@@ -7,7 +7,7 @@
 
 {% include 'welcome/scripts.html'%}
 
-<nav class="navbar navbar-expand-lg bg-dark">
+<nav class="navbar navbar-expand-lg bg-dark fixed-top">
     <div class="container-fluid">
         <a class="navbar-brand text-light" href="{% url 'index' %}">Studdy Buddy</a>
         <button class="navbar-toggler ms-auto text-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -72,4 +72,11 @@
     </div>
 </div>
 {% endif %}
+<br>
+<br>
+<br>
+{% block content %}
+{% endblock %}
+
+
 

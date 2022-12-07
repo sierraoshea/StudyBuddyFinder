@@ -8,7 +8,7 @@
 
 {% include 'welcome/base.html' %}
 
-
+{% block content %}
 <body style="background-color:#f8f4fc;">
     {% if user.is_authenticated %}
     <div class="container-fullwidth m-2">
@@ -150,16 +150,16 @@
             {% endif %}
         </body>
 
-        <footer>
-            <p> &copy; <em id="date"></em>Copyright 2022 CS3240-B-03 Project </p>
-        </footer>
+        
 
         <style>
             body {
-                background-image: url("{% static 'background.jpg' %}");
+                background-image: url("static/images/UVA.jpg");
+                background-size: cover;
+                background-repeat: no-repeat
             }
         </style>
-
+    </head>
         <!-- <!DOCTYPE html>
             <html lang="en">
             <head>
@@ -173,5 +173,10 @@
                 <h2 class = "page">Welcome to Study Buddy Finder App</h2>
             </body>
             </html> -->
+
+            <footer>
+                <div class="fixed-bottom"><p class="text-center "> &copy; <em id="date"></em>Copyright 2022 CS3240-B-03 Project </p></div>
+            </footer>
             
+{% endblock %}
             

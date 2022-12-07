@@ -6,6 +6,7 @@
 {% bootstrap_javascript %}
 
 {% include 'welcome/base.html' %}
+{% block content %}
 {% if user.is_authenticated %}
 <body style="background-color:#f8f4fc;">
 <div class="container-fluid m-3">
@@ -60,4 +61,6 @@
 </div>
 </div>
 </body>
+{% endblock %}
+
 
