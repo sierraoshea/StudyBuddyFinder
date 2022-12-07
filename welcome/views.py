@@ -21,22 +21,28 @@ from .models import FriendList
 from django.db.models import Q
 from datetime import datetime
 
-
 import string
 import random
 
 
 def index(request):
     if request.user.is_authenticated:
-        meetings = meeting.objects.filter(participants=request.user, date__gte = datetime.today(), time__gte =datetime.today()).order_by('date')
-        meetings_old = meeting.objects.filter(date__lt = datetime.today(), time__lt = datetime.today())
+        meetings = meeting.objects.filter(participants=request.user, date__gte = datetime.today()).order_by('date')
+        meetings_old = meeting.objects.filter(date__lt = datetime.today())
 
         for old_meeting in meetings_old:
             old_meeting.delete()
-        
-        requests = []
+
+        sent_requests = []
         for thisRequest in request.user.from_user.all():
-            requests.append(thisRequest.to_user)
+            sent_requests.append(thisRequest.to_user)
+
+        received_requests = []
+        user_to_id = {}
+        for thisRequest in request.user.to_user.all():
+            received_requests.append(thisRequest.from_user)
+            user_to_id[thisRequest.from_user.id] = thisRequest.id
+
         if not request.user.day_set.all():
             days = ['M','T','W','Th','F','Sa','Su']
             for day in days:
@@ -48,7 +54,7 @@ def index(request):
             active.append( request.user.classes.all()[0])
 
         
-        return render(request, 'welcome/index.html', {'meetings': meetings, 'sent_requests' : requests, 'active':active})
+        return render(request, 'welcome/index.html', {'meetings': meetings, 'sent_requests' : sent_requests, 'received_requests': received_requests, 'active':active, 'user_to_id': user_to_id })
 
     return render(request, 'welcome/index.html')
 
@@ -186,7 +192,6 @@ def send_friend_request(request, userID):
     return HttpResponseRedirect(reverse('index'))
 
 
-
 def accept_friend_request(request, requestID):
     friend_request = Friend_Request.objects.get(id=requestID)
     current_list = FriendList.objects.select_related().filter(user=request.user.id)
@@ -239,21 +244,23 @@ def decline_friend_request(request, requestID):
 
 def remove_friend(request, userID):
     if request.method == "POST":
-        from_user = request.user.id
+        from_user = request.user
         to_user = User.objects.get(id=userID)
-        to_user_friendlist = FriendList.objects.select_related().filter(user=to_user)
-        if to_user_friendlist.exists():
-            for i in to_user_friendlist:
-                i.friends.remove(from_user)
-                return HttpResponseRedirect(reverse('friends'), {'friend_list_this_user': i.friends})
-        from_user_friendlist = FriendList.objects.select_related().filter(user=from_user)
-        if from_user_friendlist.exists():
-            for j in from_user_friendlist:
-                j.friends.remove(to_user)
-                return HttpResponseRedirect(reverse('friends'), {'friend_list_from_user': j.friends})
-        room = UserToUserChat.objects.filter(user1=request.user) | UserToUserChat.objects.filter(user2=from_user)
-        if room.exists():
-            room.delete
+        to_user_friendlist = FriendList.objects.get(user=to_user)
+        from_user_friendlist = FriendList.objects.get(user=from_user)
+
+        if to_user_friendlist:
+            to_user_friendlist.friends.remove(from_user)
+        if from_user_friendlist:
+            from_user_friendlist.friends.remove(to_user)
+
+        room = UserToUserChat.objects.filter(user1=from_user, user2=to_user) | UserToUserChat.objects.filter(user1=to_user, user2=from_user)
+        room.delete()
+        
+        meetings_with_friend = meeting.objects.filter(participants=from_user) & meeting.objects.filter(participants=to_user)
+        for to_delete in meetings_with_friend:
+            to_delete.delete()
+
     return HttpResponseRedirect(reverse('friends'))
 
 
@@ -277,6 +284,7 @@ def friends(request):
     except(AttributeError):
         friend_request = []
     return render(request, 'welcome/friends.html', {'friends': friend_request, 'friend_list': friend_list})
+
 
 def room(request, room_name):
     
@@ -398,13 +406,9 @@ def page(request):
 
 
 # Things to ask about:
-# How to disable a button and make it say sent after friend request was sent
-    # Show the friends instead of a request
-# How to make sure you cannot send a friend request to someone twice
-# make sure you cannot add classes twice
 # be able to sort users based on certain features
 # change the setup of the page when you are not logged in
-# if you change friends on backend it does not update main friends
-# make sure you are showing the correct friend list once you remove people
-# adding user back as a friend not working also now
+# add bios below adding each user other than the name
+
+
 

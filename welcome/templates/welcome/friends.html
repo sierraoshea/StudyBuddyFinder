@@ -16,37 +16,46 @@
                     <tr>
                         <td>Usernames</td>
                     </tr>
-                        {% for friend_request in friends %}
-                        <tr>
-                            <td>
-                                {{ friend_request.from_user.username }}
-                                    <form action= "{% url 'accept friend request' friend_request.id %}" method="POST">
-                                        {% csrf_token %}
-                                        <input type="submit" value="Accept">
-                                    </form>
-                                    <form action= "{% url 'decline friend request' friend_request.id %}" method="POST">
-                                        {% csrf_token %}
-                                        <input type="submit" value="Decline">
-                                    </form>
-
-                            </td>
-                            </tr>
-                        {% endfor %}
+                    {% for friend_request in friends %}
+                    <tr>
+                        <td>
+                            {{ friend_request.from_user.username }}
+                            <form action= "{% url 'accept friend request' friend_request.id %}" method="POST">
+                                {% csrf_token %}
+                                <input type="submit" value="Accept">
+                            </form>
+                            <form action= "{% url 'decline friend request' friend_request.id %}" method="POST">
+                                {% csrf_token %}
+                                <input type="submit" value="Decline">
+                            </form>
+                            
+                        </td>
+                    </tr>
+                    {% endfor %}
                 </table>
                 {% else %}
-                    <p class="text-center p-1">You have no pending friend requests</p>
+                <p class="text-center p-1">You have no pending friend requests</p>
                 {% endif %}
             </ul>
-            </div>
-        <div class="col-md-6 m-2 bg-white rounded">
-                <h3 class="text-center m-2">Friends</h3>
-            {% for friend in user.user.friends.all %}
-                <p>{{ friend.first_name }} {{ friend.last_name }}</p>
-                    <div class="float-end p-2"><a href= "{% url 'remove friend' friend.id %}" class="btn btn-success" method="POST">Remove Friend</a></div>
-                     {% csrf_token %}
-                 </form>
-            {% endfor %}
         </div>
+        <div class="col-md-6 m-2 bg-white rounded">
+            <h3 class="text-center m-2">Friends</h3>
+            <p class="text-center m-2"> Here are your friends from your classes. Click on their name to learn more about them:</p>
+            {% for friend in friend_list.all %}
+            <div class=" border-bottom border-dark clearfix">
+            <a href="{% url 'viewuser' friend.id %}">
+                <h5 class="float-start p-2" style="color:rgb(50, 48, 48)">{{ friend.first_name }} {{ friend.last_name }}</h5>
+            </a>
+            <div class="float-end p-2">
+                <form action="{% url 'remove_friend' friend.id %}" method="POST">
+                    {% csrf_token %}
+                    <button class="btn btn-success">Remove Friend</button>
+                </form>
+            </div>
+                <div class="float-end p-2"><a href="{% url 'newmeeting' friend.id %}" class="btn btn-warning">Schedule Meeting</a></div>
+            </div>
+            {% endfor %}
+
     </div>
 </div>
 

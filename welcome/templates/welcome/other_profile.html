@@ -73,7 +73,6 @@
                 {% if student in user.user.friends.all %}
                     <div class="clearfix">
                         <div class="float-start"><a href="{% url 'newmeeting' student.id %}" class="btn btn-primary">Schedule Meeting</a></div>
-                        <div class="float-end"><a href="{% url 'remove friend' student.id %}" class="btn btn-danger">Remove Friend</a></div>
                     </div>
                 {% else %}
                     {% if student in sent_requests %}
