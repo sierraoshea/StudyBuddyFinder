@@ -5,8 +5,9 @@
 {% bootstrap_css %}
 {% bootstrap_javascript %}
 
-{% include 'welcome/base.html' %}
 
+{% include 'welcome/base.html' %}
+{% block content %}
 <style>
     table tbody:nth-child(odd) {
         background-color: #E8E8E8;
@@ -169,3 +170,4 @@
         }
     }
 </script>
+{% endblock %}
