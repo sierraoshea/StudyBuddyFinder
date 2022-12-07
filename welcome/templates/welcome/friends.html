@@ -46,8 +46,8 @@
                 <form action="{% url 'remove_friend' friend.id %}" method="POST">
                     {% csrf_token %}
                     <button class="btn btn-success">Remove Friend</button>
-                </div>
-            </form>
+                </form>
+            </div>
             {% endfor %}
         </div>
     </div>

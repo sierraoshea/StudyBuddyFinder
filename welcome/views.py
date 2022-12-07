@@ -249,8 +249,10 @@ def remove_friend(request, userID):
         to_user_friendlist = FriendList.objects.get(user=to_user)
         from_user_friendlist = FriendList.objects.get(user=from_user)
 
-        to_user_friendlist.friends.remove(from_user)
-        from_user_friendlist.friends.remove(to_user)
+        if to_user_friendlist:
+            to_user_friendlist.friends.remove(from_user)
+        if from_user_friendlist:
+            from_user_friendlist.friends.remove(to_user)
 
         room = UserToUserChat.objects.filter(user1=from_user, user2=to_user) | UserToUserChat.objects.filter(user1=to_user, user2=from_user)
         room.delete()
