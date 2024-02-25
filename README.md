@@ -1,8 +1,6 @@
 # Study Buddy Finder-CS3240 B-03 Project
 A Project to connect students with each other to study
 
-The webstite page: https://b-03-study-buddy-finder.herokuapp.com/
-
 Having trouble finding good studdy buddies for your classes at UVA? Well look no further! This site has everything you need to find and coordinate with a your own studdy buddy circle.
 
 Using this site you will be able to:
